@@ -3,8 +3,8 @@
    ===================================================================== */
 import { $, $$, TODAY, addD, dOff, esc, fmtDate, iso, parse, uid } from '../core/utils.js';
 import { PR, PSTAT, ST } from '../core/constants.js';
-import { seed } from '../data/seed.js';
-import { D, DEFAULT_PREFS, S, allTasks, canSee, commentsOf, logAct, me, mem, proj, save, task, tasksOf, visibleProjects } from '../core/store.js';
+import { blank } from '../data/seed.js';
+import { D, S, allTasks, canSee, commentsOf, logAct, me, mem, proj, save, task, tasksOf, visibleProjects } from '../core/store.js';
 import { fileType, fsize } from '../ui/helpers.js';
 import { effectiveDark } from '../core/theme.js';
 import { mutate, toast } from '../ui/toast.js';
@@ -1787,25 +1787,6 @@ A.retryOnline = el => {
     toast('Reconnected. All changes are synced.');
   }, 700);
 };
-A.resetDemo = () => {
-  S.ui.pop = null;
-  confirmDlg({
-    title: 'Reset demo data?',
-    body: 'All projects, tasks, and settings in this browser go back to the original sample workspace.',
-    ok: 'Reset data',
-    danger: true,
-    icon: 'rotate-ccw',
-    run: () => {
-      S.data = seed();
-      S.views = {};
-      S.prefs = { ...DEFAULT_PREFS, theme: S.prefs.theme };
-      S.ui.drawer = null;
-      save();
-      go('home');
-      toast('Demo data restored');
-    },
-  });
-};
 A.toastInfo = el => toast(el.dataset.msg, { kind: 'info' });
 A.demoToast = el => {
   const v = el.dataset.v;
@@ -1920,12 +1901,11 @@ A.delWorkspace = () =>
     danger: true,
     typeName: D().ws.name,
     run: () => {
-      S.data = seed();
+      S.data = blank();
       S.views = {};
+      S.prefs.name = S.prefs.title = '';
       save();
-      S.ui.auth = 'login';
-      render();
-      toast('Workspace deleted. Demo data was restored for this prototype.', { kind: 'info', ms: 5000 });
+      A.startFresh();
     },
   });
 A.avColor = el => {
@@ -2206,6 +2186,9 @@ IN.onbUrl = el => {
   S.ui.onbData.urlTouched = true;
   render();
 };
+IN.onbName = el => {
+  S.ui.onbData.name = el.value;
+};
 IN.onbProj = el => {
   S.ui.onbData.proj = el.value;
   S.ui.onbData.projTouched = true;
@@ -2221,6 +2204,12 @@ A.onbBack = () => {
 };
 A.onbNext = el => {
   const o = S.ui.onbData;
+  if (S.ui.onb === 1 && o.fresh && !o.name.trim()) {
+    S.ui.errors.name = 'Enter your name to continue';
+    render();
+    $('#o-name')?.focus();
+    return;
+  }
   if (S.ui.onb === 1 && !o.ws.trim()) {
     S.ui.errors.ws = 'Name your workspace to continue';
     render();
@@ -2243,6 +2232,14 @@ A.onbNext = el => {
   render();
   setTimeout(() => $('.auth input')?.focus(), 20);
 };
+// Setup for an empty workspace: asks for your name, the workspace name and a first project.
+A.startFresh = () => {
+  Object.assign(S.ui.onbData, { fresh: true, name: '', ws: '', url: '', urlTouched: false, proj: '', projTouched: false, tmpl: 'blank', invites: '' });
+  S.ui.errors = {};
+  S.ui.auth = 'onboarding';
+  S.ui.onb = 1;
+  render();
+};
 A.onbExit = () => {
   S.ui.auth = null;
   render();
@@ -2251,6 +2248,11 @@ A.onbFinish = () => {
   const o = S.ui.onbData;
   let p;
   mutate(() => {
+    if (o.fresh) {
+      S.prefs.name = me().name = o.name.trim();
+      const w = D().workspaces.find(x => x.name === D().ws.name);
+      if (w) w.name = o.ws.trim();
+    }
     if (o.ws.trim()) {
       const c = ['#2F2E2A', '#5A67D8', '#23918A', '#C54B78'][D().workspaces.length % 4];
       D().ws = { name: o.ws.trim(), url: o.url || 'workspace', c };
@@ -2287,6 +2289,7 @@ A.onbFinish = () => {
         }),
       );
   });
+  o.fresh = false;
   S.ui.auth = null;
   go('project', { id: p.id, tab: S.prefs.defaultTab });
   toast(`Welcome to ${D().ws.name}`);

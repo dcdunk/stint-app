@@ -17,6 +17,7 @@ npm install
 npm run dev       # http://localhost:5173 with hot reload
 npm run build     # production build in dist/
 npm run preview   # serve the production build locally
+npm test          # unit tests (Node's built-in runner)
 npm run lint      # ESLint
 npm run format    # Prettier
 ```

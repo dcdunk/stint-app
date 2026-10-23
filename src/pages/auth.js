@@ -100,8 +100,10 @@ export function renderOnboarding() {
       .join('')}</div>${nav()}`;
   if (st === 1) {
     const e = S.ui.errors.ws;
+    const en = S.ui.errors.name;
     body = `<h1>Create your workspace</h1><p class="sub">A workspace is where your team's projects live.</p>
-    <div class="field"><label class="label" for="o-ws">Workspace name</label><input class="input input-lg ${e ? 'is-error' : ''}" id="o-ws" data-in="onbWs" value="${esc(o.ws)}" placeholder="e.g. Gr8r Studio" autofocus>${e ? `<span class="err">${ic('circle-alert', 12)}${e}</span>` : ''}</div>
+    ${o.fresh ? `<div class="field"><label class="label" for="o-name">Your name</label><input class="input input-lg ${en ? 'is-error' : ''}" id="o-name" data-in="onbName" value="${esc(o.name)}" autocomplete="name" autofocus>${en ? `<span class="err">${ic('circle-alert', 12)}${en}</span>` : ''}</div>` : ''}
+    <div class="field"><label class="label" for="o-ws">Workspace name</label><input class="input input-lg ${e ? 'is-error' : ''}" id="o-ws" data-in="onbWs" value="${esc(o.ws)}" placeholder="e.g. Gr8r Studio" ${o.fresh ? '' : 'autofocus'}>${e ? `<span class="err">${ic('circle-alert', 12)}${e}</span>` : ''}</div>
     <div class="field"><label class="label" for="o-url">Workspace URL</label><div class="row" style="gap:0"><span class="input input-lg" style="width:auto;background:var(--surface-2);border-right:0;border-radius:6px 0 0 6px;display:flex;align-items:center;color:var(--text-2)">gr8rstudio.com/</span><input class="input input-lg" id="o-url" value="${esc(o.url || '')}" data-in="onbUrl" style="border-radius:0 6px 6px 0" placeholder="gr8rstudio"></div>${o.url ? `<span class="hint" style="color:var(--green);display:flex;gap:4px;align-items:center">${ic('check', 12)}gr8rstudio.com/${esc(o.url)} is available</span>` : ''}</div>${nav()}`;
   }
   if (st === 2)
@@ -150,6 +152,6 @@ export function renderOnboarding() {
     <div class="steps" aria-label="Step ${st + 1} of ${N}">${Array.from({ length: N }, (_, i) => `<i class="${i <= st ? 'on' : ''} ${i === st ? 'cur' : ''}"></i>`).join('')}</div>
     <div class="faint" style="text-align:center;font-size:12px">Step ${st + 1} of ${N}</div>
     ${body}</div>`,
-    `<button class="btn btn-ghost btn-sm" data-a="onbExit">Exit setup</button>`,
+    o.fresh ? '' : `<button class="btn btn-ghost btn-sm" data-a="onbExit">Exit setup</button>`,
   );
 }

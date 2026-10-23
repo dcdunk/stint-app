@@ -1,6 +1,45 @@
 /* ---------- seed data ---------- */
 import { dOff, minsAgo, uid } from '../core/utils.js';
 
+const NOTIF_PREFS = {
+  email_mention: true,
+  email_assign: true,
+  email_digest: true,
+  email_comment: false,
+  push_mention: true,
+  push_assign: true,
+  push_comment: true,
+  push_due: true,
+  mention_all: true,
+  assign_self: true,
+};
+
+/* Empty workspace for real use: just you, no projects. Onboarding fills in the names. */
+export function blank() {
+  return {
+    ws: { name: 'My workspace', url: 'workspace', c: '#2F2E2A' },
+    workspaces: [{ id: 'w1', name: 'My workspace', c: '#2F2E2A', plan: 'Free' }],
+    me: 'm1',
+    members: [{ id: 'm1', name: '', email: '', role: 'Owner', team: '', title: '', c: '#5A67D8', status: 'active', last: 0, tz: '' }],
+    teams: [],
+    projects: [],
+    tasks: [],
+    comments: [],
+    activity: [],
+    notifs: [],
+    files: [],
+    events: [],
+    projOrder: [],
+    savedViews: [],
+    recentSearches: [],
+    sessions: [{ id: 'se1', dev: 'This device', loc: '', at: 'Active now', cur: true }],
+    invoices: [],
+    tfa: false,
+    notifPrefs: { ...NOTIF_PREFS },
+  };
+}
+
+/* Demo workspace used for screenshots and UI testing. */
 export function seed() {
   const members = [
     {
@@ -528,17 +567,6 @@ export function seed() {
       { id: 'INV-2026-006', date: dOff(-114), amt: '$80.00', st: 'Paid' },
     ],
     tfa: false,
-    notifPrefs: {
-      email_mention: true,
-      email_assign: true,
-      email_digest: true,
-      email_comment: false,
-      push_mention: true,
-      push_assign: true,
-      push_comment: true,
-      push_due: true,
-      mention_all: true,
-      assign_self: true,
-    },
+    notifPrefs: { ...NOTIF_PREFS },
   };
 }

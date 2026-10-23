@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Gr8r Studio: a project management workspace. The same web code ships two ways: as a website (Vercel) and as a Mac app (Tauri, in `src-tauri/`, which wraps the Vite build in macOS's built-in WebKit view). Plain JavaScript ES modules and CSS, bundled by Vite. No UI framework, no runtime dependencies, no backend. All data is demo data from `src/data/seed.js`, persisted to `localStorage` under the key `gr8r.v2` (see `src/core/store.js`). Clear that key to reset to seed data.
+Gr8r Studio: a project management workspace. The same web code ships two ways: as a website (Vercel) and as a Mac app (Tauri, in `src-tauri/`, which wraps the Vite build in macOS's built-in WebKit view). Plain JavaScript ES modules and CSS, bundled by Vite. No UI framework, no runtime dependencies, no backend. Data starts as an empty workspace (`blank()` in `src/data/seed.js`) and the first launch runs setup (`A.startFresh`, also triggered by Settings → Delete workspace). `seed()` in the same file is a full demo workspace for screenshots and UI testing; it is no longer loaded by default. Every top-level key in `seed()` must also exist in `blank()` (enforced by `test/blank.test.js`), or pages that read it will crash on a fresh install. Data is persisted to `localStorage` under the key `gr8r.v2` (see `src/core/store.js`). Clearing that key starts setup again.
 
 ## Commands
 
@@ -20,7 +20,7 @@ npm run mac:dev        # Mac app window with hot reload (needs Rust: ~/.cargo/bi
 npm run mac:build      # unsigned .app + .dmg in src-tauri/target/release/bundle/
 ```
 
-There is no test suite. CI (`.github/workflows/ci.yml`) runs `lint`, `format:check` and `build` on every push to main and every PR, so run all three before calling a change done, and verify UI changes in the running dev server. Node 22 (`.nvmrc`). Deploys to Vercel from `dist/` (`vercel.json`).
+`npm test` runs `test/*.test.js` with Node's built-in runner (single file: `node --test test/blank.test.js`). CI (`.github/workflows/ci.yml`) runs `lint`, `format:check`, `test` and `build` on every push to main and every PR, so run all three before calling a change done, and verify UI changes in the running dev server. Node 22 (`.nvmrc`). Deploys to Vercel from `dist/` (`vercel.json`).
 
 In dev builds, `window.__gr8r` exposes `{ S, D, A, go, render }` for debugging from the browser console.
 

@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "mac:dev": "tauri dev",
-    "mac:build": "tauri build"
+    "mac:build": "tauri build",
+    "test": "node --test test/"
   },
   "engines": {
     "node": ">=18"
