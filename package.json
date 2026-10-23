@@ -1,8 +1,8 @@
 {
-  "name": "gr8r-studio",
+  "name": "stint",
   "version": "1.0.0",
   "private": true,
-  "description": "Gr8r Studio: a calm, structured project management workspace.",
+  "description": "Stint: a calm, structured project management workspace.",
   "type": "module",
   "scripts": {
     "dev": "vite",

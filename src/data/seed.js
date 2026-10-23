@@ -45,7 +45,7 @@ export function seed() {
     {
       id: 'm1',
       name: 'Tanjim Islam',
-      email: 'hello@gr8rstudio.com',
+      email: 'hello@stint.app',
       role: 'Owner',
       team: 'product',
       title: 'Head of Product',
@@ -57,7 +57,7 @@ export function seed() {
     {
       id: 'm2',
       name: 'Sarah Chen',
-      email: 'sarah@gr8rstudio.com',
+      email: 'sarah@stint.app',
       role: 'Admin',
       team: 'design',
       title: 'Design Lead',
@@ -69,7 +69,7 @@ export function seed() {
     {
       id: 'm3',
       name: 'John Carter',
-      email: 'john@gr8rstudio.com',
+      email: 'john@stint.app',
       role: 'Member',
       team: 'eng',
       title: 'Frontend Engineer',
@@ -81,7 +81,7 @@ export function seed() {
     {
       id: 'm4',
       name: 'Emma Wilson',
-      email: 'emma@gr8rstudio.com',
+      email: 'emma@stint.app',
       role: 'Member',
       team: 'design',
       title: 'Product Designer',
@@ -93,7 +93,7 @@ export function seed() {
     {
       id: 'm5',
       name: 'Priya Patel',
-      email: 'priya@gr8rstudio.com',
+      email: 'priya@stint.app',
       role: 'Member',
       team: 'mkt',
       title: 'Content Strategist',
@@ -105,7 +105,7 @@ export function seed() {
     {
       id: 'm6',
       name: 'Marcus Lee',
-      email: 'marcus@gr8rstudio.com',
+      email: 'marcus@stint.app',
       role: 'Member',
       team: 'eng',
       title: 'Backend Engineer',
@@ -117,7 +117,7 @@ export function seed() {
     {
       id: 'm7',
       name: 'Lena Fischer',
-      email: 'lena@gr8rstudio.com',
+      email: 'lena@stint.app',
       role: 'Admin',
       team: 'product',
       title: 'QA Lead',
@@ -153,7 +153,7 @@ export function seed() {
       start: dOff(-30),
       fav: true,
       members: ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7'],
-      desc: 'Rebuild gr8rstudio.com with a clearer information architecture, a responsive component library, and a faster CMS-driven blog.',
+      desc: 'Rebuild stint.app with a clearer information architecture, a responsive component library, and a faster CMS-driven blog.',
       milestones: [
         { name: 'Wireframes signed off', date: dOff(2) },
         { name: 'Dev handoff', date: dOff(14) },
@@ -537,9 +537,9 @@ export function seed() {
   const tmp = tk('t3');
   tmp.updated = minsAgo(38);
   return {
-    ws: { name: 'Gr8r Studio', url: 'gr8rstudio', c: '#1D1C1A', brand: true },
+    ws: { name: 'Stint', url: 'stint', c: '#1D1C1A', brand: true },
     workspaces: [
-      { id: 'w1', name: 'Gr8r Studio', c: '#1D1C1A', plan: 'Team', brand: true },
+      { id: 'w1', name: 'Stint', c: '#1D1C1A', plan: 'Team', brand: true },
       { id: 'w2', name: 'Personal', c: '#3D8E5F', plan: 'Free' },
       { id: 'w3', name: 'Acme Labs', c: '#3B82C4', plan: 'Business' },
     ],
@@ -557,7 +557,7 @@ export function seed() {
     recentSearches: ['homepage', 'Sarah', 'wireframes'],
     sessions: [
       { id: 'se1', dev: 'MacBook Pro · Chrome', loc: 'San Francisco, US', at: 'Active now', cur: true },
-      { id: 'se2', dev: 'iPhone 15 · Gr8r app', loc: 'San Francisco, US', at: '2 hours ago' },
+      { id: 'se2', dev: 'iPhone 15 · Stint app', loc: 'San Francisco, US', at: '2 hours ago' },
       { id: 'se3', dev: 'Windows · Edge', loc: 'Oakland, US', at: 'Sep 12' },
     ],
     invoices: [

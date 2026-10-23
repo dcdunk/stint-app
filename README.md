@@ -1,4 +1,4 @@
-# Gr8r Studio
+# Stint
 
 A calm, structured project management workspace: home dashboard, inbox, my tasks, projects with
 board / list / table / calendar / timeline / files views, members, teams, activity and settings.
@@ -6,7 +6,7 @@ board / list / table / calendar / timeline / files views, members, teams, activi
 Built with plain JavaScript ES modules and CSS, bundled by [Vite](https://vite.dev). There is no
 UI framework and no runtime dependency.
 
-![Gr8r Studio home dashboard](docs/preview.png)
+![Stint home dashboard](docs/preview.png)
 
 ## Getting started
 
@@ -29,7 +29,7 @@ The same UI also ships as a macOS app via [Tauri](https://tauri.app). It needs t
 
 ```bash
 npm run mac:dev     # app window with hot reload
-npm run mac:build   # Gr8r Studio.app and .dmg in src-tauri/target/release/bundle/
+npm run mac:build   # Stint.app and .dmg in src-tauri/target/release/bundle/
 ```
 
 Builds are not code-signed yet, so on another Mac the first launch needs right-click → Open.

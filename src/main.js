@@ -61,7 +61,7 @@ import './features/archive.js';
 import './actions/teams.js';
 import './actions/subtasks.js';
 import './actions/archive.js';
-import { S, D, saved } from './core/store.js';
+import { S, D } from './core/store.js';
 import { A } from './actions/actions.js';
 import { ROUTE_NAMES, render, go } from './shell/render.js';
 
@@ -79,9 +79,10 @@ import { ROUTE_NAMES, render, go } from './shell/render.js';
   if (authRoutes.includes(h)) S.ui.auth = h;
   else if (h && ROUTE_NAMES[h]) S.ui.route = h;
   else S.ui.route = S.prefs.home || 'home';
-  if (!saved && !S.ui.auth) A.startFresh();
+  // No name yet means setup never finished (new install, or quit midway after deleting the workspace).
+  if (!S.prefs.name && !S.ui.auth) A.startFresh();
   render();
 })();
 
 // Dev-only handle for debugging and screenshot tooling; stripped from production builds.
-if (import.meta.env.DEV) window.__gr8r = { S, D, A, go, render };
+if (import.meta.env.DEV) window.__stint = { S, D, A, go, render };

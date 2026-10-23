@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Gr8r Studio",
+  "productName": "Stint",
   "version": "1.0.0",
   "identifier": "com.dcdunk.gr8rstudio",
   "build": {
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Gr8r Studio",
+        "title": "Stint",
         "width": 1440,
         "height": 900,
         "minWidth": 900,

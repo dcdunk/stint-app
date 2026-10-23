@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Gr8r Studio: a project management workspace. The same web code ships two ways: as a website (Vercel) and as a Mac app (Tauri, in `src-tauri/`, which wraps the Vite build in macOS's built-in WebKit view). Plain JavaScript ES modules and CSS, bundled by Vite. No UI framework, no runtime dependencies, no backend. Data starts as an empty workspace (`blank()` in `src/data/seed.js`) and the first launch runs setup (`A.startFresh`, also triggered by Settings → Delete workspace). `seed()` in the same file is a full demo workspace for screenshots and UI testing; it is no longer loaded by default. Every top-level key in `seed()` must also exist in `blank()` (enforced by `test/blank.test.js`), or pages that read it will crash on a fresh install. Data is persisted to `localStorage` under the key `gr8r.v2` (see `src/core/store.js`). Clearing that key starts setup again.
+Stint: a project management workspace. The same web code ships two ways: as a website (Vercel) and as a Mac app (Tauri, in `src-tauri/`, which wraps the Vite build in macOS's built-in WebKit view). Plain JavaScript ES modules and CSS, bundled by Vite. No UI framework, no runtime dependencies, no backend. Data starts as an empty workspace (`blank()` in `src/data/seed.js`) and setup (`A.startFresh`) runs at launch whenever `S.prefs.name` is empty, so a new install or a setup quit midway always resumes it. Settings → Delete workspace also triggers it. `seed()` in the same file is a full demo workspace for screenshots and UI testing; it is no longer loaded by default. Every top-level key in `seed()` must also exist in `blank()` (enforced by `test/blank.test.js`), or pages that read it will crash on a fresh install. Data is persisted to `localStorage` under the key `gr8r.v2` (see `src/core/store.js`). The app was renamed from Gr8r Studio to Stint; this key and the Tauri bundle `identifier` deliberately keep the old name, because changing either one orphans every user's saved data. Clearing that key starts setup again.
 
 ## Commands
 
@@ -22,7 +22,7 @@ npm run mac:build      # unsigned .app + .dmg in src-tauri/target/release/bundle
 
 `npm test` runs `test/*.test.js` with Node's built-in runner (single file: `node --test test/blank.test.js`). CI (`.github/workflows/ci.yml`) runs `lint`, `format:check`, `test` and `build` on every push to main and every PR, so run all three before calling a change done, and verify UI changes in the running dev server. Node 22 (`.nvmrc`). Deploys to Vercel from `dist/` (`vercel.json`).
 
-In dev builds, `window.__gr8r` exposes `{ S, D, A, go, render }` for debugging from the browser console.
+In dev builds, `window.__stint` exposes `{ S, D, A, go, render }` for debugging from the browser console.
 
 ## Architecture
 
@@ -42,7 +42,7 @@ In dev builds, `window.__gr8r` exposes `{ S, D, A, go, render }` for debugging f
 
 Filtering/grouping for list-like views lives in `src/shell/view-engine.js` (`FIELDS` defines filterable fields).
 
-**Mac app (Tauri).** Config is `src-tauri/tauri.conf.json`; the Rust side (`src-tauri/src/`) is the stock template and holds no app logic. On boot, `src/main.js` adds a `desktop` class to `<html>` when running inside Tauri; desktop-only CSS lives at the end of `src/styles/shell.css` and reserves a topbar-high band above the workspace switcher for the window's traffic-light buttons. `.side-top` and `.topbar` carry `data-tauri-drag-region` so they drag the window. `trafficLightPosition.y` in the config is not a literal pixel offset; check alignment with the "Home" breadcrumb visually after changing it or `--topbar-h`. Fonts are bundled via `@fontsource` (no network) so the app looks identical offline. `localStorage` persists per bundle `identifier` (`com.dcdunk.gr8rstudio`): changing it wipes users' saved data.
+**Mac app (Tauri).** The app icon source is `src-tauri/icons/app-icon.svg` (focus ring on the macOS 824/1024 icon grid); regenerate the bundle icons with `npx tauri icon src-tauri/icons/app-icon.svg`, then delete the generated `android/`, `ios/` and `Square*` files. The in-app mark (`LOGO` in `src/core/icons.js`) and `public/favicon.svg` are the same artwork without the grid padding. Config is `src-tauri/tauri.conf.json`; the Rust side (`src-tauri/src/`) is the stock template and holds no app logic. On boot, `src/main.js` adds a `desktop` class to `<html>` when running inside Tauri; desktop-only CSS lives at the end of `src/styles/shell.css` and reserves a topbar-high band above the workspace switcher for the window's traffic-light buttons. `.side-top` and `.topbar` carry `data-tauri-drag-region` so they drag the window. `trafficLightPosition.y` in the config is not a literal pixel offset; check alignment with the "Home" breadcrumb visually after changing it or `--topbar-h`. Fonts are bundled via `@fontsource` (no network) so the app looks identical offline. `localStorage` persists per bundle `identifier` (`com.dcdunk.gr8rstudio`): changing it wipes users' saved data.
 
 ## Conventions
 

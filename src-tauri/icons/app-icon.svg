@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- macOS icon grid: 824px tile centred on a 1024px canvas -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#1D1C1A"/>
+  <circle cx="512" cy="512" r="220" fill="none" stroke="#33323A" stroke-width="82"/>
+  <circle cx="512" cy="512" r="220" fill="none" stroke="#7C83F7" stroke-width="82" stroke-linecap="round" stroke-dasharray="1037 1382" transform="rotate(-90 512 512)"/>
+</svg>

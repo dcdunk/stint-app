@@ -1,7 +1,7 @@
 [package]
-name = "gr8r-studio"
+name = "stint"
 version = "0.1.0"
-description = "Gr8r Studio desktop app"
+description = "Stint desktop app"
 authors = ["dcdunk"]
 license = ""
 repository = ""
