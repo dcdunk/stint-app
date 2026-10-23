@@ -1,10 +1,6 @@
 /* =====================================================================
    QUIRE — core: utils, icons, seed data, store, render loop, events
    ===================================================================== */
-// Web fonts load without blocking first paint (the link starts as media=print).
-document.querySelectorAll('link[data-font]').forEach(l => {
-  l.media = 'all';
-});
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);

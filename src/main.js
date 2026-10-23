@@ -2,7 +2,14 @@
    ENTRY: styles, then every module in dependency order (several register
    global listeners or add handlers to the action table when they load), then boot.
    ===================================================================== */
+// Fonts are bundled so the desktop app looks the same offline.
+import '@fontsource/geist/400.css';
+import '@fontsource/geist/500.css';
+import '@fontsource/geist/600.css';
+import '@fontsource/geist-mono/400.css';
 import './styles/index.css';
+// Inside the Tauri Mac app: lets CSS make room for the window's traffic-light buttons.
+if (window.__TAURI_INTERNALS__) document.documentElement.classList.add('desktop');
 import './core/utils.js';
 import './core/icons.js';
 import './core/constants.js';

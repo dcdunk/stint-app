@@ -21,6 +21,18 @@ npm run lint      # ESLint
 npm run format    # Prettier
 ```
 
+### Mac app
+
+The same UI also ships as a macOS app via [Tauri](https://tauri.app). It needs the Rust toolchain
+(`curl https://sh.rustup.rs -sSf | sh`).
+
+```bash
+npm run mac:dev     # app window with hot reload
+npm run mac:build   # Gr8r Studio.app and .dmg in src-tauri/target/release/bundle/
+```
+
+Builds are not code-signed yet, so on another Mac the first launch needs right-click → Open.
+
 ## Project structure
 
 ```

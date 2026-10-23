@@ -437,3 +437,12 @@ h3.sub {
 .offline-bar .i {
   color: var(--amber);
 }
+
+/* Mac app (Tauri): the window's traffic-light buttons sit in a topbar-high band above the
+   workspace switcher. Both the band and the topbar drag the window. */
+.desktop .side-top {
+  padding-top: var(--topbar-h);
+}
+.desktop .shell.collapsed .topbar {
+  padding-left: calc(var(--gutter) + 24px);
+}

@@ -84,7 +84,7 @@ export function renderSidebar() {
   const projs = visibleProjects().filter(p => p.status !== 'complete');
   const inProj = u.route === 'project' ? u.params.id : null;
   return `<nav class="side" aria-label="Main">
-    <div class="side-top">
+    <div class="side-top" data-tauri-drag-region>
       <div class="row" style="gap:2px">
         <button class="ws grow" data-a="pop" data-pop="ws" aria-haspopup="menu" aria-label="Switch workspace">
           ${wsLogo(d.ws, 22)}
@@ -188,7 +188,7 @@ export function crumbs() {
   return out.join('<span class="sep">/</span>');
 }
 export function renderTopbar() {
-  return `<header class="topbar">
+  return `<header class="topbar" data-tauri-drag-region>
     <button class="ibtn" data-a="openMnav" aria-label="Open navigation" style="display:none" id="mnav-btn">${ic('menu', 17)}</button>
     <style>@media(max-width:900px){#mnav-btn{display:inline-flex!important}}</style>
     <nav class="crumbs trunc" aria-label="Breadcrumb">${crumbs()}</nav>
