@@ -1753,15 +1753,6 @@ A.newWorkspace = () => {
   S.ui.onbData.url = '';
   render();
 };
-A.signOut = () => {
-  S.ui.pop = null;
-  S.ui.palette = null;
-  S.ui.drawer = null;
-  S.ui.modals = [];
-  S.ui.auth = 'login';
-  S.ui.errors = {};
-  render();
-};
 A.shortcuts = () => {
   S.ui.pop = null;
   S.ui.palette = null;
@@ -2024,7 +2015,7 @@ A.changePlan = el => {
   const price = { Free: 0, Team: 12, Business: 24 }[v];
   confirmDlg({
     title: `${v === 'Free' ? 'Downgrade' : 'Upgrade'} to ${v}?`,
-    body: `${D().members.length} members × $${price}/month = <b>$${D().members.length * price}/month</b>, prorated from today and billed to Visa ending 4242.`,
+    body: `${D().members.length} members × $${price}/month = <b>$${D().members.length * price}/month</b>, prorated from today.`,
     ok: v === 'Free' ? 'Downgrade' : `Upgrade to ${v}`,
     icon: 'gem',
     run: () => {
@@ -2037,128 +2028,7 @@ A.changePlan = el => {
 };
 
 /* auth */
-A.auth = el => {
-  S.ui.auth = el.dataset.v;
-  S.ui.errors = {};
-  S.ui.pwNew = '';
-  render();
-  setTimeout(() => $('.auth input')?.focus(), 20);
-};
-A.toggleShowPw = () => {
-  const v = $('#l-pw')?.value;
-  S.ui.showPw = !S.ui.showPw;
-  render();
-  const i = $('#l-pw');
-  if (i) {
-    i.value = v;
-    i.focus();
-  }
-};
 export const EMAIL_RE = /^\S+@\S+\.\S+$/;
-export function enterApp(msg) {
-  S.ui.auth = null;
-  S.ui.errors = {};
-  go(S.prefs.home || 'home');
-  toast(msg);
-}
-A.doLogin = () => {
-  const e = (S.ui.errors = {});
-  const em = $('#l-email').value.trim(),
-    pw = $('#l-pw').value;
-  S.ui.af.email = em;
-  if (!em) e.email = 'Enter your email address';
-  else if (!EMAIL_RE.test(em)) e.email = 'Enter a valid email, like name@company.com';
-  if (!pw) e.pw = 'Enter your password';
-  if (Object.keys(e).length) {
-    render();
-    (e.email ? $('#l-email') : $('#l-pw'))?.focus();
-    if (!e.email) $('#l-pw').value = pw;
-    return;
-  }
-  loadingBtn('login-btn', 750, () => enterApp(`Signed in as ${em}`));
-};
-A.socialAuth = el => {
-  el.classList.add('is-loading');
-  setTimeout(() => enterApp(`Signed in with ${el.dataset.v}`), 800);
-};
-A.doSignup = () => {
-  const e = (S.ui.errors = {});
-  const nm = $('#s-name').value.trim(),
-    em = $('#s-email').value.trim(),
-    pw = $('#s-pw').value;
-  S.ui.af.name = nm;
-  S.ui.af.email = em;
-  if (!nm) e.name = 'Enter your name';
-  if (!EMAIL_RE.test(em)) e.email = 'Enter a valid work email';
-  if (pw.length < 10 || !/[0-9\W]/.test(pw)) e.pw = 'Use at least 10 characters, including a number or symbol';
-  if (Object.keys(e).length) {
-    render();
-    $('#s-email').value = em;
-    return;
-  }
-  loadingBtn('signup-btn', 800, () => {
-    S.ui.auth = 'verify';
-    startResend();
-    render();
-  });
-};
-export function startResend() {
-  S.ui.resendT = 30;
-  clearInterval(startResend._i);
-  startResend._i = setInterval(() => {
-    S.ui.resendT--;
-    const el = $('#resend-t');
-    if (el) el.textContent = S.ui.resendT;
-    if (S.ui.resendT <= 0) {
-      clearInterval(startResend._i);
-      if (S.ui.auth === 'verify') render();
-    }
-  }, 1000);
-}
-A.resend = el => {
-  if (el.dataset.v === 'verify') {
-    startResend();
-    render();
-    toast(`Verification email sent to ${S.ui.af.email}`);
-  } else toast(`Reset link sent to ${S.ui.af.email}`);
-};
-A.verified = () => {
-  S.ui.auth = 'onboarding';
-  S.ui.onb = 0;
-  S.ui.onbData.ws = '';
-  S.ui.onbData.url = '';
-  render();
-};
-A.doForgot = () => {
-  const em = $('#f-email').value.trim();
-  S.ui.af.email = em;
-  S.ui.errors = {};
-  if (!EMAIL_RE.test(em)) {
-    S.ui.errors.email = 'Enter the email you use to sign in';
-    render();
-    return;
-  }
-  loadingBtn('forgot-btn', 700, () => {
-    S.ui.auth = 'forgot-sent';
-    render();
-  });
-};
-A.doReset = () => {
-  const a = $('#r-pw').value,
-    b = $('#r-pw2').value;
-  const e = (S.ui.errors = {});
-  if (a.length < 10 || !/[0-9\W]/.test(a)) e.pw = 'Use at least 10 characters, including a number or symbol';
-  if (a !== b) e.pw2 = "Passwords don't match";
-  if (Object.keys(e).length) {
-    render();
-    return;
-  }
-  loadingBtn('reset-btn', 700, () => {
-    S.ui.auth = 'reset-done';
-    S.ui.pwNew = '';
-    render();
-  });
-};
 
 /* onboarding */
 A.onbSet = el => {

@@ -75,8 +75,7 @@ import { ROUTE_NAMES, render, go } from './shell/render.js';
     document.body.appendChild(l);
   }
   const h = (location.hash || '').slice(1);
-  const authRoutes = ['login', 'signup', 'forgot', 'reset', 'verify', 'onboarding'];
-  if (authRoutes.includes(h)) S.ui.auth = h;
+  if (h === 'onboarding') S.ui.auth = h;
   else if (h && ROUTE_NAMES[h]) S.ui.route = h;
   else S.ui.route = S.prefs.home || 'home';
   // No name yet means setup never finished (new install, or quit midway after deleting the workspace).

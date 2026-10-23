@@ -375,10 +375,10 @@ export function settingsBody(sec, title) {
     case 'plan':
       return (
         H('Your subscription and usage.') +
-        `<div class="panel" style="padding:18px;margin-bottom:18px"><div class="row" style="flex-wrap:wrap"><div><div class="eyebrow">Current plan</div><div style="font-size:20px;font-weight:600;letter-spacing:-.015em;margin-top:4px">${esc(d.plan || 'Team')} <span class="muted" style="font-size:14px;font-weight:400">· $12 per member / month</span></div><div class="muted" style="font-size:13px">Renews ${fmtDate(dOff(7), true)} · Billed monthly</div></div><span class="sp"></span><button class="btn btn-secondary" data-a="go" data-r="settings" data-sec="invoices">View invoices</button></div>
+        `<div class="panel" style="padding:18px;margin-bottom:18px"><div class="row" style="flex-wrap:wrap"><div><div class="eyebrow">Current plan</div><div style="font-size:20px;font-weight:600;letter-spacing:-.015em;margin-top:4px">${esc(d.plan || 'Free')} <span class="muted" style="font-size:14px;font-weight:400">· ${{ Free: 'no cost', Team: '$12 per member / month', Business: '$24 per member / month' }[d.plan || 'Free']}</span></div><div class="muted" style="font-size:13px">${(d.plan || 'Free') === 'Free' ? 'No billing' : `Renews ${fmtDate(dOff(30), true)} · Billed monthly`}</div></div><span class="sp"></span><button class="btn btn-secondary" data-a="go" data-r="settings" data-sec="invoices">View invoices</button></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:18px">${[
         ['Members', d.members.length, 10, ''],
-        ['Storage', 12.4, 100, ' GB'],
+        ['Storage', 0, 100, ' GB'],
         ['Projects', d.projects.length, 50, ''],
       ]
         .map(
@@ -392,7 +392,7 @@ export function settingsBody(sec, title) {
         ['Business', '$24', ['Unlimited members', 'Advanced permissions', 'SAML SSO', '1 TB storage']],
       ]
         .map(([n, pr, fs]) => {
-          const cur = (d.plan || 'Team') === n;
+          const cur = (d.plan || 'Free') === n;
           return `<div class="plan ${cur ? 'cur' : ''}"><div class="row"><b>${n}</b>${cur ? '<span class="badge accent">Current</span>' : ''}</div><div class="pr">${pr}<span class="muted" style="font-size:12.5px;font-weight:400"> /member/mo</span></div><ul>${fs.map(f => `<li>${ic('check', 13)}${f}</li>`).join('')}</ul><div style="margin-top:8px">${cur ? `<button class="btn btn-secondary btn-block" disabled>Current plan</button>` : `<button class="btn ${n === 'Business' ? 'btn-primary' : 'btn-secondary'} btn-block" data-a="changePlan" data-v="${n}">${n === 'Free' ? 'Downgrade' : 'Upgrade'}</button>`}</div></div>`;
         })
         .join('')}</div>`
@@ -401,22 +401,22 @@ export function settingsBody(sec, title) {
       return (
         H('Payment method and billing details.') +
         srow(
-          `<span class="row" style="gap:10px"><span class="ftype" style="--c:var(--blue)">${ic('credit-card', 15)}</span>Visa ending in 4242</span>`,
-          'Expires 08/2028 · Default',
-          `<button class="btn btn-secondary btn-sm" data-a="toastInfo" data-msg="Card updates open in a secure payment window">Update</button>`,
+          `<span class="row" style="gap:10px"><span class="ftype" style="--c:var(--blue)">${ic('credit-card', 15)}</span>Payment method</span>`,
+          'No card on file',
+          `<button class="btn btn-secondary btn-sm" data-a="toastInfo" data-msg="Card updates open in a secure payment window">Add card</button>`,
         ) +
-        srow('Billing email', 'Invoices and receipts are sent here.', `<span class="muted" style="user-select:all">hello@stint.app</span>`) +
+        srow('Billing email', 'Invoices and receipts are sent here.', `<span class="muted" style="user-select:all">${esc(me().email || 'Not set')}</span>`) +
         srow(
           'Billing address',
-          '2150 Mission St, San Francisco, CA 94110',
+          'Not set',
           `<button class="btn btn-secondary btn-sm" data-a="toastInfo" data-msg="Address editing opens in the billing portal">Edit</button>`,
         ) +
-        srow('Tax ID', 'Shown on invoices', `<span class="muted">US EIN ••-•••4410</span>`)
+        srow('Tax ID', 'Shown on invoices', `<span class="muted">Not set</span>`)
       );
     case 'invoices':
       return (
         H('Past invoices for this workspace.') +
-        `<div class="panel" style="overflow-x:auto"><table class="perm-t" style="min-width:480px"><thead><tr><th style="padding-left:14px">Invoice</th><th style="text-align:left">Date</th><th style="text-align:left">Amount</th><th style="text-align:left">Status</th></tr></thead><tbody>${d.invoices.map(i => `<tr><td style="padding-left:14px" class="mono">${i.id}</td><td style="text-align:left" class="num">${fmtDate(i.date, true)}</td><td style="text-align:left" class="num">${i.amt}</td><td style="text-align:left"><span class="badge green">${ic('check', 11)}${i.st}</span></td></tr>`).join('')}</tbody></table></div>`
+        `<div class="panel" style="overflow-x:auto"><table class="perm-t" style="min-width:480px"><thead><tr><th style="padding-left:14px">Invoice</th><th style="text-align:left">Date</th><th style="text-align:left">Amount</th><th style="text-align:left">Status</th></tr></thead><tbody>${d.invoices.length ? '' : '<tr><td colspan="4" class="muted" style="padding:14px">No invoices yet.</td></tr>'}${d.invoices.map(i => `<tr><td style="padding-left:14px" class="mono">${i.id}</td><td style="text-align:left" class="num">${fmtDate(i.date, true)}</td><td style="text-align:left" class="num">${i.amt}</td><td style="text-align:left"><span class="badge green">${ic('check', 11)}${i.st}</span></td></tr>`).join('')}</tbody></table></div>`
       );
   }
   return page404();
