@@ -14,6 +14,10 @@ export function applyPrefs() {
   r.setAttribute('data-density', p.density);
   if (p.motion === 'reduce') r.setAttribute('data-motion', 'reduce');
   else r.removeAttribute('data-motion');
+  r.style.setProperty('--glass-tint', (p.glass || 0) + '%');
+  // Mac app: the window's glass follows macOS appearance, so pin it to the app's theme.
+  if (window.__TAURI_INTERNALS__)
+    import('@tauri-apps/api/window').then(({ getCurrentWindow }) => getCurrentWindow().setTheme(p.theme === 'system' ? null : p.theme));
 }
 export function effectiveDark() {
   if (S.prefs.theme === 'dark') return true;

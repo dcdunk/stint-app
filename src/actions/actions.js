@@ -6,7 +6,7 @@ import { PR, PSTAT, ST } from '../core/constants.js';
 import { blank } from '../data/seed.js';
 import { D, S, allTasks, canSee, commentsOf, logAct, me, mem, proj, save, task, tasksOf, visibleProjects } from '../core/store.js';
 import { fileType, fsize } from '../ui/helpers.js';
-import { effectiveDark } from '../core/theme.js';
+import { applyPrefs, effectiveDark } from '../core/theme.js';
 import { mutate, toast } from '../ui/toast.js';
 import { autosize, focusKey, fxSet, go, render } from '../shell/render.js';
 import { viewOf } from '../shell/view-engine.js';
@@ -1848,6 +1848,13 @@ IN.npToggle = el => {
   D().notifPrefs[el.dataset.k] = el.checked;
   save();
   toast('Notification preferences saved', { ms: 1500 });
+};
+// Live while dragging: re-applies the CSS variable without a full re-render.
+IN.glassOpacity = el => {
+  S.prefs.glass = +el.value;
+  applyPrefs();
+  $('#glass-val').textContent = el.value + '%';
+  save();
 };
 IN.prefSel = el => {
   const k = el.dataset.k;

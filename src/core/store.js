@@ -14,6 +14,7 @@ export const DEFAULT_PREFS = {
   lang: 'English (US)',
   tz: '(GMT-07:00) Pacific Time',
   motion: 'system',
+  glass: 0,
   home: 'home',
   openTasks: 'drawer',
   name: '',

@@ -734,3 +734,8 @@
 .select-menu .mi[aria-selected='true'] {
   font-weight: 500;
 }
+
+.range {
+  width: 180px;
+  accent-color: var(--accent);
+}

@@ -344,7 +344,7 @@ svg.logo {
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font-size: var(--fs-sm);
+  font-size: 15px;
   color: var(--text-2);
 }
 /* No padding or hover fill: the first crumb starts exactly on the content gutter; hover is shown with colour only. */
@@ -365,7 +365,12 @@ svg.logo {
 }
 .crumbs .sep {
   color: var(--text-4);
-  font-size: 12px;
+  font-size: 14px;
+}
+.topbar .btn-sm {
+  --h: 30px;
+  padding: 0 10px;
+  font-size: var(--fs);
 }
 .content {
   flex: 1;
@@ -468,4 +473,47 @@ h3.sub {
 }
 .desktop .shell.collapsed .topbar {
   padding-left: calc(var(--gutter) + 24px);
+}
+
+/* Mac app glass: the window is Liquid Glass (tauri.conf.json windowEffects). The sidebar and
+   header sit directly on it; the page content floats on top as a rounded card. */
+.desktop,
+.desktop body,
+.desktop .side,
+.desktop .main {
+  background: transparent;
+}
+.desktop body {
+  /* Settings → Appearance → Glass opacity tints the glass toward the solid sidebar colour. */
+  background: color-mix(in srgb, var(--bg-side) var(--glass-tint, 0%), transparent);
+}
+.desktop .side {
+  border-right: 0;
+}
+.desktop .topbar {
+  background: transparent;
+  border-bottom: 0;
+}
+.desktop .content {
+  margin: 0 10px 10px 0;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 10px 30px -14px rgba(0, 0, 0, 0.22);
+}
+/* Glass lets the wallpaper through, so sidebar text needs one step more contrast. */
+.desktop .sitem,
+.desktop .ws-sub {
+  color: var(--text);
+}
+.desktop .sitem .i,
+.desktop .sgroup-h {
+  color: var(--text-2);
+}
+.desktop .sitem:hover {
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+}
+.desktop .side-bot {
+  border-top-color: color-mix(in srgb, var(--text) 10%, transparent);
 }

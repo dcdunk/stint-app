@@ -116,6 +116,15 @@ export function settingsBody(sec, title) {
           return `<button class="tcard ${P.theme === k ? 'on' : ''}" role="radio" aria-checked="${P.theme === k}" data-a="setTheme" data-v="${k}"><div class="tprev" style="${k === 'system' ? 'grid-template-columns:1fr 1fr;display:grid' : ''}">${k === 'system' ? `<div style="display:grid;grid-template-columns:30% 1fr">${pv(L)}</div><div style="display:grid;grid-template-columns:30% 1fr">${pv(Dk)}</div>` : pv(k === 'light' ? L : Dk)}</div><span class="row" style="font-weight:500;font-size:13px;gap:6px">${ic(k === 'light' ? 'sun' : k === 'dark' ? 'moon' : 'monitor', 14)}${n}${P.theme === k ? `<span class="sp"></span><span style="color:var(--accent)">${ic('circle-check', 15)}</span>` : ''}</span></button>`;
         })
         .join('')}</div></div>
+      ${
+        window.__TAURI_INTERNALS__
+          ? `<div class="sblock"><h2>Window</h2>${srow(
+              'Glass opacity',
+              'How solid the sidebar and header look. 0% is full glass.',
+              `<input type="range" class="range" min="0" max="100" step="5" value="${P.glass || 0}" data-in="glassOpacity" aria-label="Glass opacity"><span class="num muted" id="glass-val" style="width:38px;text-align:right">${P.glass || 0}%</span>`,
+            )}</div>`
+          : ''
+      }
       <div class="sblock"><h2>Accent color</h2>${srow(
         'Accent',
         'Used for primary buttons, focus rings, and selection.',
