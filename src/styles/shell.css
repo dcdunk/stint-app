@@ -25,15 +25,15 @@
   user-select: none;
 }
 .side-top {
-  padding: 8px 8px 4px;
+  padding: 12px 10px 6px;
 }
 .ws {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
   width: 100%;
-  padding: 5px 6px;
-  border-radius: var(--r-sm);
+  padding: 6px;
+  border-radius: var(--r-lg);
   text-align: left;
   transition: background var(--dur);
 }
@@ -70,37 +70,76 @@ svg.logo {
   display: block;
   flex-shrink: 0;
 }
+.ws .ws-logo {
+  border-radius: 9px;
+}
+.ws-txt {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
 .ws-name {
-  font-weight: 600;
+  font-weight: 500;
+  font-size: var(--fs-md);
+  color: var(--text);
+}
+.ws-sub {
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+.side-searchwrap {
+  padding: 4px 10px 8px;
+}
+.side-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  height: 36px;
+  padding: 0 7px 0 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-3);
   font-size: var(--fs);
+  transition: border-color var(--dur);
+}
+.side-search:hover {
+  border-color: var(--border-strong);
+  color: var(--text-2);
+}
+.side-search .kbd {
+  margin-left: auto;
 }
 /* Scrolls without a visible bar: a scrollbar would eat width and push the nav off the logo's centre line when collapsed. */
 .side-scroll {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 8px 12px;
+  padding: 4px 10px 12px;
   scrollbar-width: none;
 }
 .side-scroll::-webkit-scrollbar {
   display: none;
 }
 .sgroup {
-  margin-top: 14px;
+  margin-top: 22px;
 }
 .sgroup-h {
   display: flex;
   align-items: center;
-  height: 24px;
-  padding: 0 8px;
+  height: 28px;
+  padding: 0 4px 0 10px;
   font-size: var(--fs-2xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-3);
 }
 .sgroup-h .ibtn {
-  opacity: 0;
+  opacity: 0.6;
   transition: opacity var(--dur);
 }
 .sgroup:hover .sgroup-h .ibtn,
@@ -110,13 +149,13 @@ svg.logo {
 .sitem {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 11px;
   width: 100%;
   height: var(--side-row);
-  padding: 0 8px;
-  border-radius: var(--r-sm);
+  padding: 0 10px;
+  border-radius: var(--r);
   color: var(--text-2);
-  font-size: var(--fs);
+  font-size: 14px;
   font-weight: 450;
   text-align: left;
   transition:
@@ -132,18 +171,30 @@ svg.logo {
 .sitem.on {
   background: var(--surface);
   color: var(--text);
+  border-radius: var(--r-lg);
   box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.06),
     0 0 0 1px var(--border);
   font-weight: 500;
 }
+/* Dark: active row is a lifted tile with a hairline edge; search is a soft filled field. */
 :root[data-theme='dark'] .sitem.on {
   background: var(--surface-3);
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+:root[data-theme='dark'] .side-search {
+  background: var(--surface-2);
+  border-color: transparent;
   box-shadow: none;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .sitem.on {
     background: var(--surface-3);
+    box-shadow: 0 0 0 1px var(--border-strong);
+  }
+  :root:not([data-theme='light']) .side-search {
+    background: var(--surface-2);
+    border-color: transparent;
     box-shadow: none;
   }
 }
@@ -249,7 +300,7 @@ svg.logo {
 .collapsed .sitem > span:not(.pico),
 .collapsed .sitem .ct,
 .collapsed .sgroup-h,
-.collapsed .ws-name,
+.collapsed .ws-txt,
 .collapsed .ws .chev-d,
 .collapsed .sitem .sdot,
 .collapsed .sitem .fav,
@@ -315,34 +366,6 @@ svg.logo {
 .crumbs .sep {
   color: var(--text-4);
   font-size: 12px;
-}
-.topsearch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: var(--h-sm);
-  padding: 0 6px 0 9px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  color: var(--text-3);
-  font-size: var(--fs-sm);
-  width: 220px;
-  background: var(--sunken);
-  transition: border-color var(--dur);
-}
-.topsearch:hover {
-  border-color: var(--border-strong);
-  color: var(--text-2);
-}
-.topsearch .kbd {
-  margin-left: auto;
-  flex-shrink: 0;
-}
-.topsearch .lbltxt {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
 }
 .content {
   flex: 1;

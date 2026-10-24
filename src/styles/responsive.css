@@ -5,13 +5,6 @@
   .grid2 {
     grid-template-columns: minmax(0, 1fr);
   }
-  .topsearch {
-    width: auto;
-  }
-  .topsearch .lbltxt,
-  .topsearch .kbd {
-    display: none;
-  }
 }
 @media (max-width: 900px) {
   .shell,
@@ -257,13 +250,6 @@
   .srow {
     grid-template-columns: minmax(0, 1fr);
   }
-  .topsearch {
-    border: 0;
-    background: transparent;
-    padding: 0;
-    width: var(--h-md);
-    justify-content: center;
-  }
   .crumbs button:not(.cur),
   .crumbs .sep {
     display: none;
@@ -284,8 +270,7 @@
     white-space: nowrap;
   }
   .topbar .ibtn,
-  .topbar .btn,
-  .topsearch {
+  .topbar .btn {
     min-width: 40px;
     min-height: 40px;
   }

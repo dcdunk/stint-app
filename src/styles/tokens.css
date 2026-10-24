@@ -85,7 +85,7 @@
   --h-md: 30px;
   --h-lg: 36px;
   --side-w: 252px;
-  --side-row: 30px;
+  --side-row: 34px;
   --row-h: 40px;
   --card-pad: 10px;
   --topbar-h: 46px;
@@ -199,7 +199,7 @@
   --acc-d: #d9d6cf;
 }
 :root[data-side='compact'] {
-  --side-row: 26px;
+  --side-row: 28px;
 }
 :root[data-density='compact'] {
   --row-h: 34px;
