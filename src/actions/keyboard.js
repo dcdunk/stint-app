@@ -143,6 +143,13 @@ document.addEventListener('keydown', e => {
       return;
     }
     if (typing) t.blur();
+    else if (S.ui.route === 'settings') {
+      // Skip settings sub-sections in history so one Esc leaves Settings
+      let h;
+      do h = S.ui.history.pop();
+      while (h?.route === 'settings');
+      go(h?.route || 'home', h?.params || {}, { back: true });
+    }
     return;
   }
   if (mod && e.key === 'Enter') {
