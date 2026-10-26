@@ -35,6 +35,14 @@ export const dOff = n => iso(addD(TODAY, n));
 export const diffD = (a, b) => Math.round((sod(a) - sod(b)) / DAY);
 export const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 export const MONL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+/* Quarters are stored as 'YYYY-Qn'. */
+export const quarterOf = d => `${d.getFullYear()}-Q${Math.floor(d.getMonth() / 3) + 1}`;
+export const addQ = (q, n) => {
+  const [y, k] = q.split('-Q').map(Number);
+  const i = y * 4 + (k - 1) + n;
+  return `${Math.floor(i / 4)}-Q${(i % 4) + 1}`;
+};
+export const fmtQuarter = q => (q ? q.split('-').reverse().join(' ') : '');
 export const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export const WDL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 /* Set from preferences on every render (core/theme.js), so utils never depends on the store. */

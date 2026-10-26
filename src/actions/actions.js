@@ -1,7 +1,7 @@
 /* =====================================================================
    ACTIONS · INPUT HANDLERS · DRAG & DROP · KEYBOARD · INIT
    ===================================================================== */
-import { $, $$, TODAY, addD, dOff, esc, fmtDate, iso, parse, uid } from '../core/utils.js';
+import { $, $$, TODAY, addD, dOff, esc, fmtDate, fmtQuarter, iso, parse, uid } from '../core/utils.js';
 import { PR, PSTAT, ST } from '../core/constants.js';
 import { blank } from '../data/seed.js';
 import { D, S, allTasks, canSee, commentsOf, logAct, me, mem, proj, save, task, tasksOf, visibleProjects } from '../core/store.js';
@@ -308,6 +308,26 @@ A.popPick = el => {
     S.ui.pop = null;
     render();
     toast(`${pr.name} marked ${PSTAT[v].name}`);
+    return;
+  }
+  if (p.type === 'pquarter') {
+    const pr = proj(p.id);
+    v = v || null;
+    mutate(() => {
+      pr.quarter = v;
+      D().activity.unshift({
+        id: uid('a'),
+        by: D().me,
+        verb: 'set target quarter of project',
+        task: null,
+        project: pr.id,
+        at: Date.now(),
+        extra: v ? 'to ' + fmtQuarter(v) : '(cleared)',
+      });
+    });
+    S.ui.pop = null;
+    render();
+    toast(v ? `${pr.name} targeted for ${fmtQuarter(v)}` : `Cleared target quarter for ${pr.name}`);
     return;
   }
   if (p.type === 'role') {
@@ -1267,6 +1287,7 @@ export function createProject(f, tmplId) {
     lead: f.lead,
     due: f.due || dOff(30),
     start: dOff(0),
+    quarter: null,
     fav: false,
     members: [...new Set([D().me, f.lead])],
     desc: f.desc || 'No description yet.',

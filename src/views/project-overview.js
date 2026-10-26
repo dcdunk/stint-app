@@ -1,5 +1,5 @@
 /* ---------- OVERVIEW ---------- */
-import { TODAY, dayBucket, diffD, esc, fmtDate, parse } from '../core/utils.js';
+import { TODAY, dayBucket, diffD, esc, fmtDate, fmtQuarter, parse } from '../core/utils.js';
 import { ic } from '../core/icons.js';
 import { STATUSES } from '../core/constants.js';
 import { D, TM, isOver, mem, pColor, progressOf, task, tasksOf } from '../core/store.js';
@@ -39,6 +39,7 @@ export function projOverview(p) {
           <dt>${ic('users', 14)}Team</dt><dd><button class="pillbtn" data-a="go" data-r="team" data-id="${p.team}">${ic(TM[p.team].icon, 13)}${TM[p.team].name}</button></dd>
           <dt>${ic('calendar', 14)}Start</dt><dd><span class="pillbtn num">${fmtDate(p.start, true)}</span></dd>
           <dt>${ic('flag', 14)}Due</dt><dd><span class="pillbtn num">${fmtDate(p.due, true)}</span></dd>
+          <dt>${ic('target', 14)}Quarter</dt><dd><button class="pillbtn num" data-a="pop" data-pop="pquarter" data-id="${p.id}" aria-label="Target quarter">${p.quarter ? fmtQuarter(p.quarter) : '<span class="faint">Set quarter</span>'}</button></dd>
           <dt>${ic('user-plus', 14)}Members</dt><dd><button class="pillbtn" data-a="share" data-id="${p.id}">${avStack(p.members, 6)}<span class="faint">${p.members.length}</span></button></dd>
         </dl></div></section>
         <section class="panel"><div class="panel-h"><h2>Milestones</h2></div><div class="panel-b">${

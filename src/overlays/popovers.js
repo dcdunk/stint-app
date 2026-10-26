@@ -1,5 +1,5 @@
 /* ---------------- POPOVERS ---------------- */
-import { $, MOD, MONL, TODAY, WD, addD, dOff, diffD, esc, fmtDate, iso, parse } from '../core/utils.js';
+import { $, MOD, MONL, TODAY, WD, addD, addQ, dOff, diffD, esc, fmtDate, fmtQuarter, iso, parse, quarterOf } from '../core/utils.js';
 import { ic, wsLogo } from '../core/icons.js';
 import { LABELS, PRIOS, PSTAT, STATUSES } from '../core/constants.js';
 import { D, S, allTasks, canSee, me, mem, pColor, proj, task, visibleProjects } from '../core/store.js';
@@ -199,6 +199,17 @@ export function popHtml(p) {
           on: pr.status === k,
         })),
       );
+      break;
+    }
+    case 'pquarter': {
+      const pr = proj(p.id);
+      const qs = Array.from({ length: 8 }, (_, i) => addQ(quarterOf(TODAY), i - 1));
+      if (pr.quarter && !qs.includes(pr.quarter)) qs.push(pr.quarter);
+      qs.sort();
+      inner = popList([
+        ...qs.map(q => ({ id: q, name: fmtQuarter(q), html: ic('target', 14), on: pr.quarter === q })),
+        ...(pr.quarter ? [{ id: '', name: 'No quarter', html: ic('x', 14) }] : []),
+      ]);
       break;
     }
     case 'role': {
