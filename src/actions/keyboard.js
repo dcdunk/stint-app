@@ -18,6 +18,11 @@ document.addEventListener('keydown', e => {
     pl ? A.closePalette() : A.openPalette();
     return;
   }
+  if (mod && e.key === ',') {
+    e.preventDefault();
+    go('settings');
+    return;
+  }
   if (mod && e.shiftKey && e.key.toLowerCase() === 'l') {
     e.preventDefault();
     A.toggleDark();

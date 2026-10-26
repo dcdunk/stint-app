@@ -243,6 +243,7 @@ export const SHORTCUTS = [
       ['Command menu', [MOD, 'K']],
       ['Search', ['/']],
       ['Keyboard shortcuts', ['?']],
+      ['Settings', [MOD, ',']],
       ['Toggle sidebar', ['[']],
       ['Toggle dark mode', [MOD, 'Shift', 'L']],
       ['Close panel or dialog', ['Esc']],

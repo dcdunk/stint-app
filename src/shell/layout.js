@@ -159,7 +159,7 @@ export function renderSidebar() {
     </div>
     <div class="side-bot">
       <button class="sitem" data-a="pop" data-pop="help" ${u.collapsed ? 'data-tip="Help" data-tip-pos="right"' : ''}>${ic('circle-help', 16)}<span>Help & resources</span></button>
-      ${sItem('settings', 'Settings', 'settings')}
+      ${sItem('settings', 'Settings', 'settings', { kbd: MOD + ',' })}
       <button class="sitem" data-a="pop" data-pop="user" style="height:36px" ${u.collapsed ? 'data-tip="Profile" data-tip-pos="right"' : ''}>${av(d.me, 'presence', false)}<span class="trunc" style="color:var(--text);font-weight:500">${esc(S.prefs.name)}</span><span class="ct">${ic('chevrons-up-down', 13)}</span></button>
     </div>
   </nav>`;
