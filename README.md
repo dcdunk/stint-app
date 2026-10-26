@@ -1,95 +1,22 @@
 # Stint
 
-A calm, structured project management workspace: home dashboard, inbox, my tasks, projects with
-board / list / table / calendar / timeline / files views, members, teams, activity and settings.
+A personal project management workspace for macOS.
 
-Built with plain JavaScript ES modules and CSS, bundled by [Vite](https://vite.dev). There is no
-UI framework and no runtime dependency.
+Stint keeps projects, tasks and the people working on them in one place, without accounts,
+servers or a subscription. Everything is stored on your own Mac.
 
-![Stint home dashboard](docs/preview.png)
+## What's in it
 
-## Getting started
+- **Home:** a dashboard of what's due, what's moving and what needs attention.
+- **Inbox and My tasks:** updates that involve you and everything assigned to you.
+- **Projects:** each project can be viewed as a board, list, table, calendar or timeline, with
+  an overview and a files tab.
+- **Tasks:** subtasks, comments, mentions, priorities, due dates and labels.
+- **Members and teams:** who's on what and how work is split up.
+- **Activity:** a running log of changes across the workspace.
+- **Command palette and keyboard shortcuts:** ⌘K to search or jump anywhere, ⌘, for Settings.
+- **Appearance:** light and dark themes and a Liquid Glass window with adjustable opacity.
 
-Requires Node.js 18 or newer (`.nvmrc` pins 22).
+## Built with
 
-```bash
-npm install
-npm run dev       # http://localhost:5173 with hot reload
-npm run build     # production build in dist/
-npm run preview   # serve the production build locally
-npm test          # unit tests (Node's built-in runner)
-npm run lint      # ESLint
-npm run format    # Prettier
-```
-
-### Mac app
-
-The same UI also ships as a macOS app via [Tauri](https://tauri.app). It needs the Rust toolchain
-(`curl https://sh.rustup.rs -sSf | sh`).
-
-```bash
-npm run mac:dev     # app window with hot reload
-npm run mac:build   # Stint.app and .dmg in src-tauri/target/release/bundle/
-```
-
-Builds are not code-signed yet, so on another Mac the first launch needs right-click → Open.
-
-## Project structure
-
-```
-index.html              HTML entry; loads src/main.js
-public/favicon.svg      brand mark
-vite.config.js          Vite config, including the Lucide icon-subset plugin
-eslint.config.js        lint rules (ESLint flat config); formatting by Prettier (.prettierrc.json)
-.github/workflows/      CI: lint, format check, build
-docs/preview.png        README screenshot
-src/
-  main.js               entry: imports styles and modules, then boots the app
-  styles/
-    index.css           imports every stylesheet in cascade order
-    tokens.css          colours, spacing, type, radius, the shared --gutter
-    base.css  components.css  shell.css  panels.css  overlays.css  states.css  motion.css  responsive.css
-    views/              list, board, table, calendar, timeline, projects & files
-    pages/              settings, auth & onboarding
-  core/                 utilities, constants, icons, store (state + lookups), theme
-  data/seed.js          demo workspace data
-  ui/                   shared render helpers, toasts, the select dropdown
-  shell/                render loop and router, sidebar/topbar layout, skeletons, view engine
-  components/           task list renderer
-  pages/                one module per route
-  views/                project views: board, table, calendar, timeline, files, overview
-  overlays/             task drawer, modals, popovers, context menu, command palette
-  features/             teams, subtasks, archive (rendering)
-  actions/              user actions, event wiring, keyboard shortcuts, drag and drop
-```
-
-### Layers
-
-Dependencies point downward:
-
-1. `core/` and `data/` depend on nothing else in the app.
-2. `ui/`, `shell/`, `components/`, `pages/`, `views/`, `overlays/` and `features/` render HTML from state.
-3. `actions/` change state and re-render. Each action module registers its handlers on the
-   shared action table (`A`) when it loads, so `main.js` imports them after `actions/actions.js`.
-
-## Conventions
-
-- **Rendering:** each page or view is a function that returns an HTML string from the store
-  (`S`). `render()` rebuilds the shell and keeps focus and scroll positions.
-- **Interactions:** elements declare `data-a="actionName"`. `actions/events.js` delegates the
-  click to `A.actionName`. Inputs use `data-in`, blur handlers use `data-blur`.
-- **Layout:** every page edge uses `var(--gutter)`, so the breadcrumb, page header, toolbar,
-  list, table and board start on the same line.
-- **Dropdowns:** write a normal `<select class="select">`. `ui/select.js` renders it as the
-  design-system menu and keeps the native element as the source of truth.
-- **Icons:** call `ic('name')` with any [Lucide](https://lucide.dev) icon name. The
-  `virtual:icons` plugin bundles only the icons the source uses.
-
-## Continuous integration
-
-Every push and pull request runs lint, the format check and a production build
-(`.github/workflows/ci.yml`).
-
-## Deploy
-
-`vercel.json` builds with Vite and serves `dist/`.
+Plain JavaScript and CSS, wrapped as a native Mac app with [Tauri](https://tauri.app).
