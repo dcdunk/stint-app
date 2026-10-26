@@ -18,7 +18,7 @@ const NOTIF_PREFS = {
 export function blank() {
   return {
     ws: { name: 'My workspace', url: 'workspace', c: '#2F2E2A' },
-    workspaces: [{ id: 'w1', name: 'My workspace', c: '#2F2E2A', plan: 'Free' }],
+    workspaces: [{ id: 'w1', name: 'My workspace', c: '#2F2E2A' }],
     me: 'm1',
     members: [{ id: 'm1', name: '', email: '', role: 'Owner', team: '', title: '', c: '#5A67D8', status: 'active', last: 0, tz: '' }],
     teams: [],
@@ -33,7 +33,6 @@ export function blank() {
     savedViews: [],
     recentSearches: [],
     sessions: [{ id: 'se1', dev: 'This device', loc: '', at: 'Active now', cur: true }],
-    invoices: [],
     tfa: false,
     notifPrefs: { ...NOTIF_PREFS },
   };
@@ -539,9 +538,9 @@ export function seed() {
   return {
     ws: { name: 'Stint', url: 'stint', c: '#1D1C1A', brand: true },
     workspaces: [
-      { id: 'w1', name: 'Stint', c: '#1D1C1A', plan: 'Team', brand: true },
-      { id: 'w2', name: 'Personal', c: '#3D8E5F', plan: 'Free' },
-      { id: 'w3', name: 'Acme Labs', c: '#3B82C4', plan: 'Business' },
+      { id: 'w1', name: 'Stint', c: '#1D1C1A', brand: true },
+      { id: 'w2', name: 'Personal', c: '#3D8E5F' },
+      { id: 'w3', name: 'Acme Labs', c: '#3B82C4' },
     ],
     me: 'm1',
     members,
@@ -559,12 +558,6 @@ export function seed() {
       { id: 'se1', dev: 'MacBook Pro · Chrome', loc: 'San Francisco, US', at: 'Active now', cur: true },
       { id: 'se2', dev: 'iPhone 15 · Stint app', loc: 'San Francisco, US', at: '2 hours ago' },
       { id: 'se3', dev: 'Windows · Edge', loc: 'Oakland, US', at: 'Sep 12' },
-    ],
-    invoices: [
-      { id: 'INV-2026-009', date: dOff(-23), amt: '$96.00', st: 'Paid' },
-      { id: 'INV-2026-008', date: dOff(-53), amt: '$96.00', st: 'Paid' },
-      { id: 'INV-2026-007', date: dOff(-84), amt: '$80.00', st: 'Paid' },
-      { id: 'INV-2026-006', date: dOff(-114), amt: '$80.00', st: 'Paid' },
     ],
     tfa: false,
     notifPrefs: { ...NOTIF_PREFS },
