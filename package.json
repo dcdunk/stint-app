@@ -13,7 +13,7 @@
     "format:check": "prettier --check .",
     "mac:dev": "tauri dev",
     "mac:build": "tauri build",
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=18"
