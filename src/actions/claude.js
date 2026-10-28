@@ -5,6 +5,7 @@
    answered here, against the live store, so changes show up immediately.
    ===================================================================== */
 import { $, TODAY, WDL, fmtQuarter, iso, uid } from '../core/utils.js';
+import { bulletEnter, bulletize } from '../core/bullets.js';
 import { LB, PR, PSTAT, ST } from '../core/constants.js';
 import { D, S, canSee, commentsOf, isOver, logAct, me, mem, proj, save, task, tasksOf, teamsList, visibleProjects } from '../core/store.js';
 import { mutate, toast } from '../ui/toast.js';
@@ -473,6 +474,11 @@ A.claudeSend = () => {
   });
 };
 
+// Grow the chat box with its text (CSS caps it and scrolls past that).
+const fitInput = t => {
+  t.style.height = '';
+  t.style.height = t.scrollHeight + 'px';
+};
 if (hasClaude) {
   import('@tauri-apps/api/event').then(({ listen }) => {
     listen('claude-event', e => onEvent(e.payload));
@@ -487,6 +493,9 @@ if (hasClaude) {
       if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
         A.claudeSend();
+      } else if (e.key === 'Enter' && e.shiftKey && bulletEnter(e.target)) {
+        e.preventDefault();
+        fitInput(e.target);
       } else if (e.key === 'Escape') {
         e.preventDefault();
         e.stopPropagation();
@@ -497,7 +506,7 @@ if (hasClaude) {
   );
   document.addEventListener('input', e => {
     if (e.target.id !== 'claude-in') return;
-    e.target.style.height = '';
-    e.target.style.height = e.target.scrollHeight + 'px';
+    bulletize(e.target);
+    fitInput(e.target);
   });
 }
