@@ -11,6 +11,7 @@ import { tlAfter } from '../views/timeline.js';
 import { renderLayer } from '../overlays/drawer.js';
 import { placePop } from '../overlays/popovers.js';
 import { renderAuth } from '../pages/auth.js';
+import { syncClaude } from '../features/claude.js';
 
 export const ROUTE_NAMES = {
   home: 'Home',
@@ -183,6 +184,7 @@ export function render() {
   if (prevOv.sub && !ov.sub && lost()) tryFocus('.drawer .subt [data-sid="' + (S.ui.lastSub || '') + '"]');
   if (lost() && fkey) tryFocus(fkey);
   render._ov = ov;
+  syncClaude();
   const played = S.ui.fx;
   S.ui.fx = {};
   if (played.route && !reduceMotion()) countUp();

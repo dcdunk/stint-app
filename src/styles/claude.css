@@ -1,0 +1,249 @@
+/* ---------- Claude chat (Mac app only; see src/features/claude.js) ---------- */
+#claude {
+  --cl: #d97757;
+}
+#claude[hidden] {
+  display: none;
+}
+.cl-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 90;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-full);
+  display: grid;
+  place-items: center;
+  background: var(--cl);
+  color: #fff;
+  box-shadow: var(--shadow-pop);
+  transition:
+    transform var(--dur) var(--ease),
+    opacity var(--dur) var(--ease);
+}
+.cl-fab:hover {
+  transform: scale(1.06);
+}
+.cl-fab:active {
+  transform: scale(0.96);
+}
+#claude.open .cl-fab {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+/* Toasts sit above the button rather than under it. */
+.has-claude #toasts {
+  bottom: 76px;
+}
+
+.cl-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 91;
+  width: min(400px, calc(100vw - 40px));
+  height: min(600px, calc(100vh - 40px));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-pop);
+  transform-origin: bottom right;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px) scale(0.97);
+  transition:
+    opacity 0.16s var(--ease),
+    transform 0.2s var(--ease);
+}
+#claude.open .cl-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+.cl-h {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  height: var(--topbar-h);
+  padding: 0 var(--s-2) 0 var(--s-4);
+  border-bottom: 1px solid var(--divider);
+  font-size: var(--fs);
+}
+.cl-h > svg {
+  color: var(--cl);
+}
+.cl-h b {
+  font-weight: 600;
+}
+
+.cl-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font-size: var(--fs);
+  line-height: 1.55;
+}
+.cl-empty {
+  margin: auto;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  color: var(--text-3);
+}
+.cl-empty svg {
+  color: var(--cl);
+  margin-bottom: 4px;
+}
+.cl-empty b {
+  color: var(--text);
+  font-weight: 600;
+}
+.cl-msg {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.cl-msg p + p,
+.cl-msg p + ul,
+.cl-msg ul + p {
+  margin-top: 6px;
+}
+.cl-msg ul {
+  padding-left: 18px;
+  list-style: disc;
+}
+.cl-msg code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  padding: 1px 4px;
+  border-radius: var(--r-xs);
+  background: var(--surface-3);
+}
+.cl-table {
+  overflow-x: auto;
+  margin: 6px 0;
+}
+.cl-table table {
+  border-collapse: collapse;
+  font-size: var(--fs-xs);
+}
+.cl-table th,
+.cl-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--divider);
+  text-align: left;
+  white-space: nowrap;
+}
+.cl-table th {
+  font-weight: 600;
+  color: var(--text-3);
+}
+.cl-user {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 7px 11px;
+  border-radius: var(--r-lg);
+  background: var(--surface-3);
+  white-space: pre-wrap;
+}
+.cl-ai {
+  color: var(--text);
+}
+.cl-err {
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  background: var(--red-soft);
+  color: var(--red);
+}
+.cl-err svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.cl-tool {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-4);
+}
+.cl-tool svg {
+  color: var(--green);
+}
+.cl-thinking {
+  display: flex;
+  gap: 4px;
+  padding: 6px 0;
+}
+.cl-thinking i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-4);
+  animation: clDot 1s infinite ease-in-out;
+}
+.cl-thinking i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.cl-thinking i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes clDot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.cl-f {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-2);
+  margin: 0 var(--s-3) var(--s-3);
+  padding: 6px 6px 6px 12px;
+  border-radius: var(--r-lg);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  background: var(--surface);
+}
+.cl-f:focus-within {
+  box-shadow: 0 0 0 1px var(--accent-line);
+}
+.cl-f textarea {
+  flex: 1;
+  resize: none;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs);
+  line-height: 20px;
+  padding: 3px 0;
+  max-height: 140px;
+}
+.cl-send {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-full);
+  display: grid;
+  place-items: center;
+  background: var(--cl);
+  color: #fff;
+}
+.cl-send:hover {
+  filter: brightness(1.08);
+}
