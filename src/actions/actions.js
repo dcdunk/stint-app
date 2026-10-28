@@ -1395,6 +1395,17 @@ A.restoreProject = el => {
   });
   toast(`Restored ${p.name}`);
 };
+/* Removes the project with its tasks (archived ones too), comments and files. */
+export function deleteProject(p) {
+  deleteTasks(
+    D()
+      .tasks.filter(t => t.project === p.id)
+      .map(t => t.id),
+  );
+  D().projects = D().projects.filter(x => x !== p);
+  D().projOrder = D().projOrder.filter(x => x !== p.id);
+  D().files = D().files.filter(f => f.project !== p.id);
+}
 A.delProject = el => {
   const p = proj(el.dataset.id);
   S.ui.pop = null;
@@ -1407,18 +1418,7 @@ A.delProject = el => {
     typeName: p.name,
     run: () => {
       const snap = snapshot();
-      if (
-        mutate(() => {
-          const ids = tasksOf(p.id).map(t => t.id);
-          D()
-            .tasks.filter(t => t.project === p.id)
-            .forEach(t => ids.push(t.id));
-          deleteTasks(ids);
-          D().projects = D().projects.filter(x => x !== p);
-          D().projOrder = D().projOrder.filter(x => x !== p.id);
-          D().files = D().files.filter(f => f.project !== p.id);
-        })
-      ) {
+      if (mutate(() => deleteProject(p))) {
         if (S.ui.route === 'project' && S.ui.params.id === p.id) go('projects');
         toast(`Deleted ${p.name}`, { action: 'Undo', onAction: () => restore(snap) });
       }

@@ -34,8 +34,24 @@ fn find_claude() -> Option<String> {
   (!p.is_empty()).then_some(p)
 }
 
+/* The choices offered by the picker in src/features/claude.js. */
+const MODELS: [&str; 3] = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
+const EFFORTS: [&str; 3] = ["low", "medium", "high"];
+
 #[tauri::command]
-pub fn claude_send(app: AppHandle, run: State<Run>, mcp: State<Arc<Mcp>>, prompt: String, session: Option<String>, system: String) -> Result<(), String> {
+pub fn claude_send(
+  app: AppHandle,
+  run: State<Run>,
+  mcp: State<Arc<Mcp>>,
+  prompt: String,
+  session: Option<String>,
+  system: String,
+  model: String,
+  effort: String,
+) -> Result<(), String> {
+  if !MODELS.contains(&model.as_str()) || !EFFORTS.contains(&effort.as_str()) {
+    return Err(format!("Unknown model or effort: {model}, {effort}"));
+  }
   let mut slot = run.0.lock().unwrap();
   if slot.is_some() {
     return Err("Claude is still working on your last message.".into());
@@ -53,6 +69,7 @@ pub fn claude_send(app: AppHandle, run: State<Run>, mcp: State<Arc<Mcp>>, prompt
   cmd
     .args(["-p", "--output-format", "stream-json", "--verbose", "--include-partial-messages"])
     .args(["--tools", "", "--strict-mcp-config", "--allowedTools", "mcp__stint"])
+    .args(["--model", &model, "--effort", &effort])
     .arg("--mcp-config")
     .arg(config.to_string())
     .arg("--append-system-prompt")

@@ -5,18 +5,19 @@
 #claude[hidden] {
   display: none;
 }
+/* Just under modals (60) and menus (80), so dropdowns, the palette and confirm dialogs open above the chat. */
 .cl-fab {
   position: fixed;
   right: 20px;
   bottom: 20px;
-  z-index: 90;
+  z-index: 58;
   width: 44px;
   height: 44px;
   border-radius: var(--r-full);
   display: grid;
   place-items: center;
-  background: var(--cl);
-  color: #fff;
+  background: var(--surface);
+  color: var(--cl);
   box-shadow: var(--shadow-pop);
   transition:
     transform var(--dur) var(--ease),
@@ -42,7 +43,7 @@
   position: fixed;
   right: 20px;
   bottom: 20px;
-  z-index: 91;
+  z-index: 59;
   width: min(400px, calc(100vw - 40px));
   height: min(600px, calc(100vh - 40px));
   display: flex;
@@ -179,6 +180,9 @@
 .cl-tool svg {
   color: var(--green);
 }
+.cl-tool.del svg {
+  color: var(--red);
+}
 .cl-thinking {
   display: flex;
   gap: 4px;
@@ -210,10 +214,10 @@
 
 .cl-f {
   display: flex;
-  align-items: flex-end;
-  gap: var(--s-2);
+  flex-direction: column;
+  gap: 2px;
   margin: 0 var(--s-3) var(--s-3);
-  padding: 6px 6px 6px 12px;
+  padding: 8px 6px 6px 12px;
   border-radius: var(--r-lg);
   box-shadow: 0 0 0 1px var(--border-strong);
   background: var(--surface);
@@ -233,6 +237,28 @@
   line-height: 20px;
   padding: 3px 0;
   max-height: 140px;
+}
+.cl-opts {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: -8px;
+}
+/* Model and effort pickers: quiet text buttons rather than full form fields. */
+.cl-opts .select {
+  width: auto;
+  height: 26px;
+  padding: 0 24px 0 8px;
+  border-color: transparent;
+  background-color: transparent;
+  background-position: right 7px center;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+}
+.cl-opts .select:hover {
+  border-color: transparent;
+  background-color: var(--surface-2);
+  color: var(--text);
 }
 .cl-send {
   flex-shrink: 0;

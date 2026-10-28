@@ -6,11 +6,11 @@
    ===================================================================== */
 import { $, TODAY, WDL, fmtQuarter, iso, uid } from '../core/utils.js';
 import { LB, PR, PSTAT, ST } from '../core/constants.js';
-import { D, S, canSee, commentsOf, isOver, logAct, me, mem, proj, task, tasksOf, teamsList, visibleProjects } from '../core/store.js';
-import { mutate } from '../ui/toast.js';
+import { D, S, canSee, commentsOf, isOver, logAct, me, mem, proj, save, task, tasksOf, teamsList, visibleProjects } from '../core/store.js';
+import { mutate, toast } from '../ui/toast.js';
 import { ROUTE_NAMES, go, render } from '../shell/render.js';
 import { claudeState, hasClaude, renderClaude } from '../features/claude.js';
-import { A, applyPatch, createProject, createTask } from './actions.js';
+import { A, IN, applyPatch, createProject, createTask, deleteProject, deleteTasks, restore, snapshot } from './actions.js';
 
 /* ---------- lookups: Claude may pass an id, a key or a name ---------- */
 const low = s =>
@@ -51,6 +51,12 @@ function write(fn) {
   let out;
   if (!mutate(() => (out = fn()))) throw new Error("Stint is offline, so the change wasn't saved.");
   return out;
+}
+/* Deletes get the same Undo toast as deleting by hand. */
+function remove(msg, fn) {
+  const snap = snapshot();
+  write(fn);
+  toast(msg, { action: 'Undo', onAction: () => restore(snap) });
 }
 
 /* ---------- what Claude sees ---------- */
@@ -180,7 +186,7 @@ export const TOOLS = [
         subtasks: t.subtasks.map(s => ({ title: s.title, done: s.done, due: s.due || null })),
         comments: commentsOf(t.id)
           .slice(-20)
-          .map(c => ({ by: mem(c.by)?.name, at: new Date(c.at).toISOString(), text: c.text })),
+          .map(c => ({ id: c.id, by: who(c.by), at: new Date(c.at).toISOString(), text: c.text })),
       };
     },
   },
@@ -295,6 +301,50 @@ export const TOOLS = [
     },
   },
   {
+    name: 'delete_tasks',
+    description:
+      'Permanently delete tasks, with their subtasks and comments. Before calling, tell the user exactly which tasks will go and get their OK, unless they already named them. The app shows an Undo toast for a few seconds.',
+    inputSchema: {
+      type: 'object',
+      properties: { tasks: { type: 'array', items: { type: 'string' }, minItems: 1, description: 'Task ids or keys' } },
+      required: ['tasks'],
+    },
+    run: a => {
+      const ts = [...new Set(a.tasks.map(findTask))];
+      remove(ts.length === 1 ? `Claude deleted “${ts[0].title}”` : `Claude deleted ${ts.length} tasks`, () => deleteTasks(ts.map(t => t.id)));
+      return { deleted: ts.map(t => `${t.key} ${t.title}`) };
+    },
+  },
+  {
+    name: 'delete_project',
+    description:
+      'Permanently delete a project with all its tasks, comments and files. Always confirm with the user first, naming the project and how many tasks it has. The app shows an Undo toast for a few seconds.',
+    inputSchema: { type: 'object', properties: { project: str('Project id, key or name') }, required: ['project'] },
+    run: a => {
+      const p = findProject(a.project);
+      const n = D().tasks.filter(t => t.project === p.id).length;
+      remove(`Claude deleted ${p.name}`, () => {
+        deleteProject(p);
+        if (S.ui.route === 'project' && S.ui.params.id === p.id) go('projects');
+      });
+      return { deleted: p.name, tasks_deleted: n };
+    },
+  },
+  {
+    name: 'delete_comment',
+    description: "Delete one of the user's own comments (get ids from get_task). Comments by other people can't be deleted.",
+    inputSchema: { type: 'object', properties: { comment: str('Comment id') }, required: ['comment'] },
+    run: a => {
+      const c = D().comments.find(x => x.id === a.comment);
+      if (!c || !canSee(proj(task(c.task)?.project))) throw new Error(`No comment with id “${a.comment}”`);
+      if (c.by !== D().me) throw new Error('Only your own comments can be deleted');
+      remove('Claude deleted a comment', () => {
+        D().comments = D().comments.filter(x => x !== c);
+      });
+      return { deleted: true, task: task(c.task).key };
+    },
+  },
+  {
     name: 'show',
     description: 'Bring something up on screen for the user: a task, a project tab, or a page.',
     inputSchema: {
@@ -340,7 +390,7 @@ const paint = () => {
 };
 
 function systemPrompt() {
-  return `You are Claude, built into Stint, ${me().name || 'the user'}'s project management app on their Mac. Use the stint tools to look things up and make the changes they ask for; check names and ids with tools instead of guessing. Make the change, then confirm in a sentence what you did. Ask first before changing many things at once. You can't delete anything. Replies show in a small chat panel: keep them short, plain text or simple markdown. Today is ${WDL[TODAY.getDay()]}, ${iso(TODAY)}. The user is looking at: ${where()}.`;
+  return `You are Claude, built into Stint, ${me().name || 'the user'}'s project management app on their Mac. Use the stint tools to look things up and make the changes they ask for; check names and ids with tools instead of guessing. Make the change, then confirm in a sentence what you did. Ask first before changing many things at once, and always before deleting: say exactly what will be deleted and wait for a yes, unless the user already named it. Replies show in a small chat panel: keep them short, plain text or simple markdown. Today is ${WDL[TODAY.getDay()]}, ${iso(TODAY)}. The user is looking at: ${where()}.`;
 }
 
 const LOGIN_HINT = '\n\nIf you haven’t signed in yet, open Terminal, run `claude`, sign in with your Claude account, then try again.';
@@ -393,6 +443,15 @@ A.claudeNew = () => {
   renderClaude();
   $('#claude-in')?.focus();
 };
+// Remembered across launches; a change applies from the next message, in the same chat.
+IN.claudeModel = el => {
+  S.prefs.claudeModel = el.value;
+  save();
+};
+IN.claudeEffort = el => {
+  S.prefs.claudeEffort = el.value;
+  save();
+};
 A.claudeStop = () => {
   claudeState().stopped = true;
   invoke('claude_stop');
@@ -407,7 +466,7 @@ A.claudeSend = () => {
   c.msgs.push({ role: 'user', text });
   Object.assign(c, { busy: true, gotResult: false, stopped: false });
   renderClaude();
-  invoke('claude_send', { prompt: text, session: c.session, system: systemPrompt() }).catch(e => {
+  invoke('claude_send', { prompt: text, session: c.session, system: systemPrompt(), model: S.prefs.claudeModel, effort: S.prefs.claudeEffort }).catch(e => {
     c.busy = false;
     c.msgs.push({ role: 'error', text: String(e) });
     renderClaude();

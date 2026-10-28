@@ -19,6 +19,8 @@ export const DEFAULT_PREFS = {
   openTasks: 'drawer',
   name: '',
   title: '',
+  claudeModel: 'claude-opus-5-5',
+  claudeEffort: 'medium',
 };
 export function load() {
   try {
@@ -107,7 +109,8 @@ export const visibleProjects = () =>
     .projOrder.map(proj)
     .filter(Boolean)
     .filter(p => !p.archived);
-export const canSee = p => !p.private || p.members.includes(D().me);
+// A deleted project (activity, files or comments can still point at it) is simply not visible.
+export const canSee = p => !!p && (!p.private || p.members.includes(D().me));
 export const tasksOf = pid => D().tasks.filter(t => t.project === pid && !t.archived);
 export const allTasks = () => D().tasks.filter(t => !t.archived && canSee(proj(t.project)));
 export const isOver = t => t.due && t.status !== 'done' && diffD(parse(t.due), TODAY) < 0;
