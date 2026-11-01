@@ -36,7 +36,8 @@ export function load() {
 }
 export const saved = load();
 export const S = {
-  data: saved?.data || blank(),
+  // Workspaces saved before Research existed get its empty lists.
+  data: saved?.data ? { competitors: [], comparisons: [], ...saved.data } : blank(),
   prefs: Object.assign({}, DEFAULT_PREFS, saved?.prefs || {}),
   views: saved?.views || {},
   ui: {

@@ -5,7 +5,7 @@ mod mcp;
 pub fn run() {
   tauri::Builder::default()
     .manage(claude::Run::default())
-    .invoke_handler(tauri::generate_handler![claude::claude_send, claude::claude_stop, mcp::mcp_respond])
+    .invoke_handler(tauri::generate_handler![claude::claude_send, claude::claude_stop, claude::open_url, mcp::mcp_respond])
     .setup(|app| {
       if cfg!(debug_assertions) {
         app.handle().plugin(

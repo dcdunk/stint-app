@@ -33,6 +33,8 @@ export function blank() {
     savedViews: [],
     recentSearches: [],
     sessions: [{ id: 'se1', dev: 'This device', loc: '', at: 'Active now', cur: true }],
+    competitors: [],
+    comparisons: [],
     tfa: false,
     notifPrefs: { ...NOTIF_PREFS },
   };
@@ -559,6 +561,8 @@ export function seed() {
       { id: 'se2', dev: 'iPhone 15 · Stint app', loc: 'San Francisco, US', at: '2 hours ago' },
       { id: 'se3', dev: 'Windows · Edge', loc: 'Oakland, US', at: 'Sep 12' },
     ],
+    competitors: [],
+    comparisons: [],
     tfa: false,
     notifPrefs: { ...NOTIF_PREFS },
   };

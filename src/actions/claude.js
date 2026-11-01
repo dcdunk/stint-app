@@ -11,6 +11,7 @@ import { D, S, canSee, commentsOf, isOver, logAct, me, mem, proj, save, task, ta
 import { mutate, toast } from '../ui/toast.js';
 import { ROUTE_NAMES, go, render } from '../shell/render.js';
 import { claudeState, hasClaude, renderClaude } from '../features/claude.js';
+import { RESEARCH_CHAT_TOOLS, RESEARCH_TOOLS, onResearchDone, onResearchEvent, researchBusy, startQueuedResearch } from './research.js';
 import { A, IN, applyPatch, createProject, createTask, deleteProject, deleteTasks, restore, snapshot } from './actions.js';
 
 /* ---------- lookups: Claude may pass an id, a key or a name ---------- */
@@ -354,7 +355,7 @@ export const TOOLS = [
         task: str('Task id or key to open'),
         project: str('Project id, key or name to open'),
         tab: { type: 'string', enum: ['overview', 'board', 'list', 'table', 'calendar', 'timeline', 'files', 'activity'] },
-        page: { type: 'string', enum: Object.keys(ROUTE_NAMES).filter(r => r !== 'project') },
+        page: { type: 'string', enum: Object.keys(ROUTE_NAMES).filter(r => r !== 'project' && r !== 'comparison') },
       },
     },
     run: a => {
@@ -373,8 +374,10 @@ export const TOOLS = [
 
 /* ---------- MCP bridge: requests forwarded by src-tauri/src/mcp.rs ---------- */
 function answerMcp({ method, params }) {
-  if (method === 'tools/list') return { tools: TOOLS.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) };
-  const tool = TOOLS.find(t => t.name === params?.name);
+  // A research run has read untrusted pages, so it can only reach the comparison tools.
+  const tools = researchBusy() ? RESEARCH_TOOLS : [...TOOLS, ...RESEARCH_CHAT_TOOLS];
+  if (method === 'tools/list') return { tools: tools.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) };
+  const tool = tools.find(t => t.name === params?.name);
   try {
     if (!tool) throw new Error(`Unknown tool ${params?.name}`);
     return { content: [{ type: 'text', text: JSON.stringify(tool.run(params.arguments || {})) }] };
@@ -402,6 +405,7 @@ function onEvent(line) {
   } catch {
     return;
   }
+  if (researchBusy()) return onResearchEvent(o);
   const c = claudeState();
   if (o.type === 'system' && o.subtype === 'init') c.session = o.session_id;
   else if (o.type === 'stream_event') {
@@ -421,6 +425,7 @@ function onEvent(line) {
   paint();
 }
 function onDone({ code, stderr }) {
+  if (researchBusy()) return onResearchDone(code, stderr);
   const c = claudeState();
   c.busy = false;
   if (!c.gotResult && !c.stopped) {
@@ -428,6 +433,8 @@ function onDone({ code, stderr }) {
     c.msgs.push({ role: 'error', text: msg + (/log ?in|api key|auth/i.test(msg) ? LOGIN_HINT : '') });
   }
   paint();
+  if (c.stopped) S.ui.rQueued = null;
+  startQueuedResearch();
 }
 
 A.claudeToggle = () => {
@@ -445,14 +452,18 @@ A.claudeNew = () => {
   $('#claude-in')?.focus();
 };
 // Remembered across launches; a change applies from the next message, in the same chat.
-IN.claudeModel = el => {
-  S.prefs.claudeModel = el.value;
+// One setting, shown in several chat boxes: keep every copy of the picker on the same choice.
+const setPick = (key, el) => {
+  S.prefs[key] = el.value;
   save();
+  document.querySelectorAll(`select[data-in="${key}"]`).forEach(s => {
+    if (s.value === el.value) return;
+    s.value = el.value;
+    s.dispatchEvent(new Event('change', { bubbles: true }));
+  });
 };
-IN.claudeEffort = el => {
-  S.prefs.claudeEffort = el.value;
-  save();
-};
+IN.claudeModel = el => setPick('claudeModel', el);
+IN.claudeEffort = el => setPick('claudeEffort', el);
 A.claudeStop = () => {
   claudeState().stopped = true;
   invoke('claude_stop');
@@ -462,12 +473,20 @@ A.claudeSend = () => {
   const inp = $('#claude-in');
   const text = inp.value.trim();
   if (!text || c.busy) return;
+  if (researchBusy()) return toast('Claude is researching. Stop it or wait until it finishes.', { kind: 'info' });
   inp.value = '';
   inp.style.height = '';
   c.msgs.push({ role: 'user', text });
   Object.assign(c, { busy: true, gotResult: false, stopped: false });
   renderClaude();
-  invoke('claude_send', { prompt: text, session: c.session, system: systemPrompt(), model: S.prefs.claudeModel, effort: S.prefs.claudeEffort }).catch(e => {
+  invoke('claude_send', {
+    prompt: text,
+    session: c.session,
+    system: systemPrompt(),
+    model: S.prefs.claudeModel,
+    effort: S.prefs.claudeEffort,
+    research: false,
+  }).catch(e => {
     c.busy = false;
     c.msgs.push({ role: 'error', text: String(e) });
     renderClaude();

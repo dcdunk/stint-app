@@ -13,6 +13,7 @@
 @import './overlays.css';
 @import './claude.css';
 @import './states.css';
+@import './pages/research.css';
 @import './pages/settings.css';
 @import './pages/auth.css';
 @import './motion.css';

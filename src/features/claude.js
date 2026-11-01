@@ -29,10 +29,14 @@ const TOOL_LABEL = {
   delete_tasks: 'Deleted tasks',
   delete_project: 'Deleted a project',
   delete_comment: 'Deleted a comment',
+  list_comparisons: 'Looked up comparisons',
+  get_comparison: 'Read a comparison',
+  create_comparison: 'Created a comparison',
+  start_research: 'Queued research',
 };
 
 /* Just enough markdown for chat replies: code, bold, italics, links-as-text, bullets. */
-function md(s) {
+export function md(s) {
   const inline = t =>
     esc(t)
       .replace(/`([^`]+)`/g, '<code>$1</code>')
@@ -100,6 +104,10 @@ export const CLAUDE_EFFORTS = [
 const picker = (list, cur, key, label) =>
   `<select class="select cl-pick" data-in="${key}" aria-label="${label}">${list.map(([v, n]) => `<option value="${v}"${v === cur ? ' selected' : ''}>${n}</option>`).join('')}</select>`;
 
+/* The model and effort pickers. Research's chat boxes show the same two. */
+export const claudePicks = () =>
+  `${picker(CLAUDE_MODELS, S.prefs.claudeModel, 'claudeModel', 'Model')}${picker(CLAUDE_EFFORTS, S.prefs.claudeEffort, 'claudeEffort', 'Effort')}`;
+
 function mount() {
   const root = document.createElement('div');
   root.id = 'claude';
@@ -108,7 +116,7 @@ function mount() {
       <header class="cl-h">${logo(16)}<b>Claude</b><span class="sp"></span><button class="ibtn ibtn-sm" data-a="claudeNew" data-tip="New chat" aria-label="New chat">${ic('square-pen', 15)}</button><button class="ibtn ibtn-sm" data-a="claudeToggle" aria-label="Close chat">${ic('x', 15)}</button></header>
       <div class="cl-log" id="claude-log" aria-live="polite"></div>
       <form class="cl-f" data-submit="claudeSend"><textarea id="claude-in" rows="1" placeholder="Ask Claude to do something…" aria-label="Message Claude"></textarea>
-        <div class="cl-opts">${picker(CLAUDE_MODELS, S.prefs.claudeModel, 'claudeModel', 'Model')}${picker(CLAUDE_EFFORTS, S.prefs.claudeEffort, 'claudeEffort', 'Effort')}<span class="sp"></span><button class="cl-send" id="claude-go" aria-label="Send">${ic('arrow-up', 15)}</button></div></form>
+        <div class="cl-opts">${claudePicks()}<span class="sp"></span><button class="cl-send" id="claude-go" aria-label="Send">${ic('arrow-up', 15)}</button></div></form>
     </section>`;
   document.body.appendChild(root);
   document.documentElement.classList.add('has-claude');
@@ -119,7 +127,8 @@ function mount() {
 export function syncClaude() {
   if (!hasClaude) return;
   const root = $('#claude') || (renderClaude(), $('#claude'));
-  root.hidden = !!S.ui.auth;
+  // Research has its own conversation beside the sheet.
+  root.hidden = !!S.ui.auth || S.ui.route === 'research' || S.ui.route === 'comparison';
 }
 
 export function renderClaude() {

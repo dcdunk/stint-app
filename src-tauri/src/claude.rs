@@ -2,7 +2,7 @@
 //! signed in to Claude Code with. Each message is one `claude -p` run (resuming the
 //! previous session); stdout's stream-json lines go to the webview as `claude-event`,
 //! and `claude-done` fires when the process exits. Built-in tools are switched off:
-//! the only tools are Stint's own, served by mcp.rs.
+//! the only tools are Stint's own, served by mcp.rs. Research runs add web access.
 use crate::mcp::Mcp;
 use serde_json::json;
 use std::io::{BufRead, BufReader, Read, Write};
@@ -38,6 +38,12 @@ fn find_claude() -> Option<String> {
 const MODELS: [&str; 3] = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"];
 const EFFORTS: [&str; 3] = ["low", "medium", "high"];
 
+/* A research run reads the open web, so it gets the web tools plus only the comparison
+   tools (actions/research.js also refuses anything else while one is running). */
+const RESEARCH_BUILTIN: &str = "WebSearch,WebFetch";
+const RESEARCH_ALLOWED: &str =
+  "WebSearch,WebFetch,mcp__stint__get_comparison,mcp__stint__set_plan,mcp__stint__set_comparison_name,mcp__stint__add_competitors,mcp__stint__add_features,mcp__stint__set_finding,mcp__stint__set_writeup";
+
 #[tauri::command]
 pub fn claude_send(
   app: AppHandle,
@@ -48,6 +54,7 @@ pub fn claude_send(
   system: String,
   model: String,
   effort: String,
+  research: bool,
 ) -> Result<(), String> {
   if !MODELS.contains(&model.as_str()) || !EFFORTS.contains(&effort.as_str()) {
     return Err(format!("Unknown model or effort: {model}, {effort}"));
@@ -68,7 +75,8 @@ pub fn claude_send(
   let mut cmd = Command::new(bin);
   cmd
     .args(["-p", "--output-format", "stream-json", "--verbose", "--include-partial-messages"])
-    .args(["--tools", "", "--strict-mcp-config", "--allowedTools", "mcp__stint"])
+    .args(if research { ["--tools", RESEARCH_BUILTIN] } else { ["--tools", ""] })
+    .args(["--strict-mcp-config", "--allowedTools", if research { RESEARCH_ALLOWED } else { "mcp__stint" }])
     .args(["--model", &model, "--effort", &effort])
     .arg("--mcp-config")
     .arg(config.to_string())
@@ -116,4 +124,13 @@ pub fn claude_stop(run: State<Run>) {
   if let Some(c) = run.0.lock().unwrap().as_mut() {
     let _ = c.kill();
   }
+}
+
+/* Source links open in the default browser. Web addresses only. */
+#[tauri::command]
+pub fn open_url(url: String) -> Result<(), String> {
+  if !(url.starts_with("https://") || url.starts_with("http://")) {
+    return Err("Only web links can be opened.".into());
+  }
+  Command::new("/usr/bin/open").arg(&url).spawn().map(|_| ()).map_err(|e| e.to_string())
 }

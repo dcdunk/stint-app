@@ -1785,12 +1785,6 @@ A.startOnboarding = () => {
   S.ui.onb = 0;
   render();
 };
-A.toggleOffline = () => {
-  S.ui.offline = !S.ui.offline;
-  S.ui.pop = null;
-  render();
-  toast(S.ui.offline ? 'Offline mode on — edits will fail to save' : 'Back online', { kind: S.ui.offline ? 'err' : 'ok' });
-};
 A.retryOnline = el => {
   el.classList.add('is-loading');
   setTimeout(() => {
@@ -1800,37 +1794,6 @@ A.retryOnline = el => {
   }, 700);
 };
 A.toastInfo = el => toast(el.dataset.msg, { kind: 'info' });
-A.demoToast = el => {
-  const v = el.dataset.v;
-  if (v === 'err') toast("Your changes couldn't be saved.", { kind: 'err', action: 'Try again', onAction: () => toast('Saved') });
-  else if (v === 'retry') {
-    toast('Retrying…', { kind: 'info', ms: 1200 });
-    setTimeout(() => toast('Loaded successfully'), 1300);
-  } else toast('Moved “Create homepage wireframes” to Review', { action: 'Undo', onAction: () => toast('Undone', { kind: 'info' }) });
-};
-A.demoConfirm = () =>
-  confirmDlg({
-    title: 'Archive Marketing Website?',
-    body: 'The project will be hidden from the sidebar. You can restore it any time.',
-    ok: 'Archive project',
-    icon: 'archive',
-    run: () => toast('This was a preview — nothing was archived', { kind: 'info' }),
-  });
-A.demoLoad = el => {
-  el.classList.add('is-loading');
-  setTimeout(() => {
-    el.classList.remove('is-loading');
-    toast('Loaded');
-  }, 1400);
-};
-A.reloadPage = () => {
-  S.ui.loading = true;
-  render();
-  setTimeout(() => {
-    S.ui.loading = false;
-    render();
-  }, 1400);
-};
 
 /* modals */
 A.closeModal = () => closeModal();

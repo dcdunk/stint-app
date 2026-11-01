@@ -96,7 +96,9 @@ export const selectMenu = {
     (menu.querySelector('[aria-selected="true"]') || menu.querySelector('.mi'))?.focus({ preventScroll: true });
   },
   pick(i) {
-    const { sel, btn } = this;
+    const { btn } = this;
+    // A background render may have replaced the <select> while its menu was open.
+    const sel = this.sel?.isConnected || !this.sel?.dataset.in ? this.sel : document.querySelector(`select[data-in="${this.sel.dataset.in}"]`);
     this.close(true);
     if (!sel || sel.selectedIndex === i) return;
     sel.selectedIndex = i;

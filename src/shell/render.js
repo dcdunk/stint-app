@@ -22,6 +22,8 @@ export const ROUTE_NAMES = {
   search: 'Search',
   overview: 'Overview',
   projects: 'Projects',
+  research: 'Research',
+  comparison: 'Comparison',
   tasks: 'Tasks',
   calendar: 'Calendar',
   timeline: 'Timeline',
@@ -31,8 +33,6 @@ export const ROUTE_NAMES = {
   team: 'Team',
   activity: 'Activity',
   settings: 'Settings',
-  system: 'Design system',
-  states: 'System states',
   archive: 'Archive',
 };
 export const ROUTE_ICONS = {
@@ -44,6 +44,8 @@ export const ROUTE_ICONS = {
   search: 'search',
   overview: 'layout-dashboard',
   projects: 'folder-kanban',
+  research: 'telescope',
+  comparison: 'telescope',
   tasks: 'list-checks',
   calendar: 'calendar',
   timeline: 'chart-gantt',
@@ -51,8 +53,6 @@ export const ROUTE_ICONS = {
   activity: 'activity',
   teams: 'users',
   settings: 'settings',
-  system: 'component',
-  states: 'layers',
   archive: 'archive',
 };
 

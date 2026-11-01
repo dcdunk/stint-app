@@ -22,7 +22,7 @@ import { pageProject } from '../pages/project.js';
 import { pageWsCalendar } from '../views/calendar.js';
 import { pageWsTimeline } from '../views/timeline.js';
 import { pageSettings } from '../pages/settings.js';
-import { pageStates, pageSystem } from '../pages/design-system.js';
+import { pageComparison, pageResearch } from '../pages/research.js';
 import { pageArchive } from '../features/archive.js';
 
 export function renderShell() {
@@ -50,6 +50,8 @@ export function renderPage() {
       search: pageSearch,
       overview: pageOverview,
       projects: pageProjects,
+      research: pageResearch,
+      comparison: pageComparison,
       project: pageProject,
       tasks: pageTasks,
       calendar: pageWsCalendar,
@@ -60,8 +62,6 @@ export function renderPage() {
       team: pageTeam,
       activity: pageActivity,
       settings: pageSettings,
-      system: pageSystem,
-      states: pageStates,
       archive: pageArchive,
     };
     return (P[r] || page404)();
@@ -72,7 +72,7 @@ export function renderPage() {
 }
 
 export function sItem(route, label, icon, opt = {}) {
-  const on = S.ui.route === route && (!opt.id || S.ui.params.id === opt.id);
+  const on = (S.ui.route === route || S.ui.route === opt.also) && (!opt.id || S.ui.params.id === opt.id);
   return `<button class="sitem ${on ? 'on' : ''}" data-a="${opt.act || 'go'}" data-r="${route}" ${opt.id ? `data-id="${opt.id}"` : ''} ${S.ui.collapsed ? `data-tip="${esc(label)}" data-tip-pos="right"` : ''} ${on ? 'aria-current="page"' : ''}>${ic(icon, 16)}<span class="trunc">${esc(label)}</span>${opt.ct ? `<span class="ct ${opt.dot ? 'dotc' : ''}">${opt.ct}</span>` : ''}${opt.kbd ? `<span class="ct hide-m"><kbd>${opt.kbd}</kbd></span>` : ''}</button>`;
 }
 export function renderSidebar() {
@@ -111,6 +111,7 @@ export function renderSidebar() {
         <div class="sgroup-h">Workspace</div>
         ${sItem('overview', 'Overview', 'layout-dashboard')}
         ${sItem('projects', 'Projects', 'folder-kanban')}
+        ${sItem('research', 'Research', 'telescope', { also: 'comparison' })}
         ${sItem('tasks', 'Tasks', 'list-checks')}
         ${sItem('calendar', 'Calendar', 'calendar')}
         ${sItem('timeline', 'Timeline', 'chart-gantt')}
@@ -188,6 +189,9 @@ export function crumbs() {
   } else if (r === 'team') {
     out.push(c('Teams', 'data-a="go" data-r="teams"'));
     out.push(c(team(u.params.id)?.name || 'Team', '', true));
+  } else if (r === 'comparison') {
+    out.push(c('Research', 'data-a="go" data-r="research"'));
+    out.push(c(D().comparisons.find(x => x.id === u.params.id)?.name || 'Comparison', '', true));
   } else if (r === 'settings') {
     out.push(c('Settings', '', true));
   } else out.push(c(ROUTE_NAMES[r] || 'Not found', '', true));
